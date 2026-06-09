@@ -6,6 +6,14 @@ import { drizzle as postgresDrizzle } from "drizzle-orm/postgres-js";
 
 const url = process.env.DATABASE_URL ?? "";
 
-export const db = url.includes("neon.tech") || url.includes("neon.database")
+const isNeon = url.includes("neon.tech") || url.includes("neon.database");
+const isRailway = url.includes("railway.internal") || url.includes("rlwy.net");
+
+export const db = isNeon
   ? neonDrizzle(neon(url), { schema })
-  : postgresDrizzle(postgres(url || "postgresql://ravenswood:ravenswood_secret@localhost:5433/hoteltermas"), { schema });
+  : postgresDrizzle(
+      postgres(url || "postgresql://ravenswood:ravenswood_secret@localhost:5433/hoteltermas", {
+        ssl: isRailway ? "require" : false,
+      }),
+      { schema }
+    );
