@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 
@@ -318,15 +317,14 @@ export default function ActividadesPage() {
   const [season, setSeason] = useState<"verano" | "invierno">("verano");
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-
+  // Lee ?cat= sin useSearchParams (evita requerir un boundary de Suspense en el build)
   useEffect(() => {
-    const cat = searchParams.get("cat");
+    const cat = new URLSearchParams(window.location.search).get("cat");
     if (cat) {
       setSelectedCat(cat);
       if (cat === "Centro de Ski" || cat.startsWith("SKI")) setSeason("invierno");
     }
-  }, [searchParams]);
+  }, []);
   const [catImgMap, setCatImgMap] = useState<Record<string, string>>({});
   const [clubs, setClubs] = useState<Activity[]>([]);
   // Textos editables desde el admin (Páginas de Información → ui-actividades)
