@@ -3,15 +3,28 @@ import { useRef, useState } from "react";
 import { Pencil, Trash2, Plus, X, Save, ImagePlus, Loader2, Search } from "lucide-react";
 import Image from "next/image";
 
-interface Product { id: number; category: string; name: string; price: string | null; active: boolean; }
 interface InfoItem { id: number; section: string; title: string; content: string; active: boolean; }
 interface HeroInfo { id?: number; content: string; }
 
-const PRODUCT_CATS = ["Cuidado Personal e Higiene", "Bebés y Niños", "Electrónica y Accesorios", "Vestuario y Accesorios", "Piscina y Deporte"];
 
-export default function HabitacionAdminClient({ initialProducts, initialInfo }: { initialProducts: Product[]; initialInfo: InfoItem[] }) {
-  const [tab, setTab] = useState<"products" | "info">("products");
-  const [products, setProducts] = useState(initialProducts);
+// Section keys → display labels (must match the guest page section order)
+const SECTION_LABELS: Record<string, string> = {
+  housekeeping: "Servicios de Aseo",
+  lavanderia: "Lavandería",
+  caja: "Caja de Seguridad",
+  minibar: "Minibar",
+  room_service: "Room Service",
+  almohadas: "Menú de Almohadas",
+  climatizacion: "Climatización",
+  redes: "Redes y Contraseñas",
+  tv: "TV",
+  guarda_maletas: "Guarda Maletas",
+  hidratacion: "Punto de Hidratación",
+  protocolo: "Protocolos",
+  emergencia: "Emergencias",
+};
+
+export default function HabitacionAdminClient({ initialInfo }: { initialInfo: InfoItem[] }) {
   const [info, setInfo] = useState(initialInfo);
 
   // Hero image
@@ -126,24 +139,10 @@ export default function HabitacionAdminClient({ initialProducts, initialInfo }: 
     setHeroSaved(true);
     setTimeout(() => setHeroSaved(false), 2500);
   };
-  const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [editingInfo, setEditingInfo] = useState<Partial<InfoItem> | null>(null);
   const [query, setQuery] = useState("");
 
-  const byCategory = products.reduce<Record<string, Product[]>>((acc, p) => {
-    if (!acc[p.category]) acc[p.category] = [];
-    acc[p.category].push(p);
-    return acc;
-  }, {});
 
-  const saveProduct = async (data: Partial<Product>) => {
-    const isNew = !data.id;
-    const res = await fetch("/api/admin/habitacion", { method: isNew ? "POST" : "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...data, type: "product" }) });
-    const json = await res.json();
-    if (isNew) setProducts(s => [...s, json.product]);
-    else setProducts(s => s.map(x => x.id === json.product.id ? json.product : x));
-    setEditingProduct(null);
-  };
 
   const saveInfo = async (data: Partial<InfoItem>) => {
     const isNew = !data.id;
@@ -154,11 +153,6 @@ export default function HabitacionAdminClient({ initialProducts, initialInfo }: 
     setEditingInfo(null);
   };
 
-  const deleteProduct = async (id: number) => {
-    if (!confirm("¿Eliminar?")) return;
-    await fetch("/api/admin/habitacion", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, type: "product" }) });
-    setProducts(s => s.filter(x => x.id !== id));
-  };
 
   const deleteInfo = async (id: number) => {
     if (!confirm("¿Eliminar?")) return;
@@ -256,41 +250,7 @@ export default function HabitacionAdminClient({ initialProducts, initialInfo }: 
         </div>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        {[{ k: "products", l: "Productos" }, { k: "info", l: "Información" }].map(t => (
-          <button key={t.k} onClick={() => setTab(t.k as typeof tab)} className={`px-5 py-2 rounded-full text-[13px] font-semibold transition-all ${tab === t.k ? "bg-[#1B4332] text-white" : "bg-white border border-gray-200 text-gray-600"}`}>{t.l}</button>
-        ))}
-      </div>
 
-      {tab === "products" ? (
-        <>
-          <button onClick={() => setEditingProduct({ category: PRODUCT_CATS[0], active: true })} className="flex items-center gap-2 bg-[#1B4332] text-white px-4 py-2 rounded-xl text-[13px] font-medium mb-5">
-            <Plus size={15} /> Agregar producto
-          </button>
-          <div className="relative mb-5">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar producto..." className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-[14px] outline-none focus:border-[#1B4332] bg-white" />
-          </div>
-          {Object.entries(byCategory).map(([cat, items]) => {
-            const vis = query ? items.filter(p => p.name.toLowerCase().includes(query.toLowerCase())) : items;
-            if (vis.length === 0) return null;
-            return (
-            <div key={cat} className="mb-5">
-              <h2 className="font-semibold text-gray-600 text-[12px] uppercase tracking-wide mb-2">{cat}</h2>
-              {vis.map(p => (
-                <div key={p.id} className="bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm flex justify-between items-center mb-1.5">
-                  <div><span className="text-[14px] font-medium text-gray-900">{p.name}</span>{p.price && <span className="ml-3 text-[#1B4332] font-semibold text-[13px]">{p.price}</span>}</div>
-                  <div className="flex gap-2">
-                    <button onClick={() => setEditingProduct(p)} className="p-1.5 text-gray-400 hover:text-gray-700"><Pencil size={13} /></button>
-                    <button onClick={() => deleteProduct(p.id)} className="p-1.5 text-gray-400 hover:text-red-500"><Trash2 size={13} /></button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            );
-          })}
-        </>
-      ) : (
         <>
           <button onClick={() => setEditingInfo({ section: "caja", active: true })} className="flex items-center gap-2 bg-[#1B4332] text-white px-4 py-2 rounded-xl text-[13px] font-medium mb-5">
             <Plus size={15} /> Agregar información
@@ -299,9 +259,10 @@ export default function HabitacionAdminClient({ initialProducts, initialInfo }: 
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar información..." className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-[14px] outline-none focus:border-[#1B4332] bg-white" />
           </div>
-          {info.filter(i => i.section !== "hero_image" && (!query || i.title.toLowerCase().includes(query.toLowerCase()))).map(item => (
+          {info.filter(i => !i.section.startsWith("img_") && !i.section.startsWith("act_cat_") && i.section !== "hero_image" && (!query || i.title.toLowerCase().includes(query.toLowerCase()) || i.section.toLowerCase().includes(query.toLowerCase()))).map(item => (
             <div key={item.id} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-3 flex justify-between gap-3">
               <div className="flex-1">
+                <span className="inline-block text-[10px] font-semibold uppercase tracking-wide text-[#1B4332] bg-[#1B4332]/10 rounded px-1.5 py-0.5 mb-1">{SECTION_LABELS[item.section] ?? item.section}</span>
                 <p className="font-semibold text-gray-900 text-[14px]">{item.title}</p>
                 <p className="text-gray-400 text-[12px] mt-0.5 line-clamp-3 whitespace-pre-line">{item.content}</p>
               </div>
@@ -312,32 +273,7 @@ export default function HabitacionAdminClient({ initialProducts, initialInfo }: 
             </div>
           ))}
         </>
-      )}
 
-      {/* Product modal */}
-      {editingProduct && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <div className="flex justify-between mb-4"><h3 className="font-bold text-gray-900">Producto</h3><button onClick={() => setEditingProduct(null)}><X size={18} className="text-gray-400" /></button></div>
-            <div className="flex flex-col gap-3">
-              <div><label className="text-[12px] font-semibold text-gray-600 mb-1 block">Categoría</label>
-                <select className="w-full border border-gray-200 rounded-xl px-3 py-2 text-[14px]" value={editingProduct.category ?? ""} onChange={e => setEditingProduct(p => ({ ...p!, category: e.target.value }))}>
-                  {PRODUCT_CATS.map(c => <option key={c}>{c}</option>)}
-                </select>
-              </div>
-              {[{ key: "name", label: "Nombre" }, { key: "price", label: "Precio" }].map(f => (
-                <div key={f.key}><label className="text-[12px] font-semibold text-gray-600 mb-1 block">{f.label}</label>
-                  <input className="w-full border border-gray-200 rounded-xl px-3 py-2 text-[14px]" value={(editingProduct as Record<string, string | null | undefined | boolean>)[f.key] as string ?? ""} onChange={e => setEditingProduct(p => ({ ...p!, [f.key]: e.target.value }))} />
-                </div>
-              ))}
-            </div>
-            <div className="flex gap-3 mt-5">
-              <button onClick={() => setEditingProduct(null)} className="flex-1 border border-gray-200 rounded-xl py-2.5 text-[14px] text-gray-600">Cancelar</button>
-              <button onClick={() => saveProduct(editingProduct)} className="flex-1 bg-[#1B4332] text-white rounded-xl py-2.5 text-[14px] font-medium flex items-center justify-center gap-2"><Save size={14} /> Guardar</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Info modal */}
       {editingInfo && (
@@ -347,7 +283,17 @@ export default function HabitacionAdminClient({ initialProducts, initialInfo }: 
             <div className="flex flex-col gap-3">
               <div><label className="text-[12px] font-semibold text-gray-600 mb-1 block">Sección</label>
                 <select className="w-full border border-gray-200 rounded-xl px-3 py-2 text-[14px]" value={editingInfo.section ?? "caja_seguridad"} onChange={e => setEditingInfo(p => ({ ...p!, section: e.target.value }))}>
+                  <option value="housekeeping">Servicios de Aseo</option>
+                  <option value="lavanderia">Lavandería</option>
                   <option value="caja">Caja de Seguridad</option>
+                  <option value="minibar">Minibar</option>
+                  <option value="room_service">Room Service</option>
+                  <option value="almohadas">Menú de Almohadas</option>
+                  <option value="climatizacion">Climatización</option>
+                  <option value="redes">Redes y Contraseñas</option>
+                  <option value="tv">TV</option>
+                  <option value="guarda_maletas">Guarda Maletas</option>
+                  <option value="hidratacion">Punto de Hidratación</option>
                   <option value="protocolo">Protocolos</option>
                   <option value="emergencia">Emergencias</option>
                 </select>

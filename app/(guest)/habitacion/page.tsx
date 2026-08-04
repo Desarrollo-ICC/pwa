@@ -1,311 +1,215 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
-interface Product { id: number; category: string; name: string; price: string | null; }
 interface InfoItem { id: number; section: string; title: string; content: string; }
 
-type View =
-  | { type: "home" }
-  | { type: "housekeeping" }
-  | { type: "info_menu" }
-  | { type: "info_detail"; section: string; label: string }
-  | { type: "productos" };
-
-const INFO_SECTIONS = [
-  { key: "caja",      label: "Caja de Seguridad", emergency: false },
-  { key: "protocolo", label: "Protocolos",         emergency: false },
-  { key: "emergencia",label: "Emergencias",        emergency: true  },
+// Nav tabs (Barra Superior Habitación — Figma) → anchor to sections in the single scroll
+const NAV: { key: string; label: string }[] = [
+  { key: "housekeeping",   label: "Servicios de Aseo" },
+  { key: "lavanderia",     label: "Lavandería" },
+  { key: "caja",           label: "Caja de Seguridad" },
+  { key: "minibar",        label: "Minibar" },
+  { key: "room_service",   label: "Room Service" },
+  { key: "almohadas",      label: "Menú de Almohadas" },
+  { key: "climatizacion",  label: "Climatización" },
+  { key: "redes",          label: "Redes y Contraseñas" },
+  { key: "tv",             label: "TV" },
+  { key: "guarda_maletas", label: "Guarda Maletas" },
+  { key: "hidratacion",    label: "Punto de Hidratación" },
 ];
 
-const PRODUCT_CATS = ["Cuidado Personal e Higiene", "Bebés y Niños", "Electrónica y Accesorios", "Vestuario y Accesorios", "Piscina y Deporte"];
-
-function SubHero({ title, imageSrc, accentColor, onBack }: { title: string; imageSrc?: string; accentColor?: string; onBack: () => void; }) {
+function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`relative w-full overflow-hidden rounded-b-3xl ${!imageSrc ? (accentColor ?? "bg-gradient-to-br from-[#1B4332] to-[#2D6A4F]") : ""}`} style={{ height: 378 }}>
-      {imageSrc && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={imageSrc} alt={title} className="w-full h-full object-cover" />
-      )}
-      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-6">
-        <h1 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 40, lineHeight: 1, textAlign: "center" }} className="text-white drop-shadow-lg px-6">{title}</h1>
-        <button onClick={onBack} className="bg-[#1B4332] text-white px-5 py-2 rounded-full text-[13px] font-semibold flex items-center gap-1 shadow-sm">
-          <ChevronLeft size={14} /> Volver
-        </button>
-      </div>
-    </div>
+    <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, lineHeight: 1.05, color: "#54432B", textAlign: "center" }} className="mb-4">
+      {children}
+    </h2>
   );
 }
 
 export default function HabitacionPage() {
-  const [view, setView] = useState<View>({ type: "home" });
-  const [products, setProducts] = useState<Product[]>([]);
+  const router = useRouter();
   const [info, setInfo] = useState<InfoItem[]>([]);
   const [heroImg, setHeroImg] = useState("/images/habitacion.jpg");
-  const [navImgs, setNavImgs] = useState({ img_housekeeping: "/images/habitacion.jpg", img_informacion: "/images/login-bg.jpg", img_productos: "/images/spa.jpg" });
-  const [infoImgs, setInfoImgs] = useState({ img_caja: "/images/login-bg.jpg", img_protocolo: "/images/login-bg.jpg", img_emergencia: "/images/login-bg.jpg" });
-  const [activeProductCat, setActiveProductCat] = useState(PRODUCT_CATS[0]);
-  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const [active, setActive] = useState("housekeeping");
+  const [openLav, setOpenLav] = useState<string | null>("Lavandería - Hombre");
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
-    fetch("/api/habitacion/products").then(r => r.json()).then(d => setProducts(d.products ?? []));
     fetch("/api/habitacion/info").then(r => r.json()).then(d => {
       const items: InfoItem[] = d.info ?? [];
       setInfo(items);
       const hero = items.find(i => i.section === "hero_image");
       if (hero?.content) setHeroImg(hero.content);
-      const hs = items.find(i => i.section === "img_housekeeping");
-      const inf = items.find(i => i.section === "img_informacion");
-      const prod = items.find(i => i.section === "img_productos");
-      setNavImgs({
-        img_housekeeping: hs?.content ?? "/images/habitacion.jpg",
-        img_informacion:  inf?.content ?? "/images/login-bg.jpg",
-        img_productos:    prod?.content ?? "/images/spa.jpg",
-      });
-      const ic = items.find(i => i.section === "img_caja");
-      const ip = items.find(i => i.section === "img_protocolo");
-      const ie = items.find(i => i.section === "img_emergencia");
-      setInfoImgs({
-        img_caja:       ic?.content ?? "/images/login-bg.jpg",
-        img_protocolo:  ip?.content ?? "/images/login-bg.jpg",
-        img_emergencia: ie?.content ?? "/images/login-bg.jpg",
-      });
     });
   }, []);
 
-  const goBack = () => {
-    if (view.type === "info_detail") setView({ type: "info_menu" });
-    else setView({ type: "home" });
+  const rowsBySection = useMemo(() => {
+    const m: Record<string, InfoItem[]> = {};
+    for (const i of info) (m[i.section] ??= []).push(i);
+    return m;
+  }, [info]);
+
+  const visible = NAV.filter(s => s.key === "housekeeping" || (rowsBySection[s.key]?.length ?? 0) > 0);
+
+  const scrollTo = (key: string) => {
+    setActive(key);
+    sectionRefs.current[key]?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-
-  const SYSTEM_SECTIONS = new Set(["hero_image", "housekeeping", "lavanderia", "img_housekeeping", "img_informacion", "img_productos"]);
-  const housekeepingItems = info.filter(i => i.section === "housekeeping");
-  const lavanderiaItems = info.filter(i => i.section === "lavanderia");
-  const allProductCats = [...new Set(products.map(p => p.category))];
-  const productsByCategory = products.reduce<Record<string, Product[]>>((acc, p) => {
-    if (!acc[p.category]) acc[p.category] = [];
-    acc[p.category].push(p);
-    return acc;
-  }, {});
-  const filteredProducts = products.filter(p => p.category === activeProductCat);
-
-  // ── HOME ──────────────────────────────────────────────────────────────
-  if (view.type === "home") {
-    const NAV_CARDS = [
-      { key: "housekeeping" as const, label: "Housekeeping", img: navImgs.img_housekeeping },
-      { key: "info_menu"    as const, label: "Información",  img: navImgs.img_informacion },
-      { key: "productos"    as const, label: "Productos",    img: navImgs.img_productos },
-    ];
-    return (
-      <div className="min-h-svh bg-[#FFFBF3]">
-        <Header />
-        <div className="pt-14 px-4 pb-28 md:pb-12 md:max-w-3xl md:mx-auto">
-          <h1 className="text-[#3D2B1F] text-center mt-12 mb-6" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 40, lineHeight: 1 }}>Mi Habitación</h1>
-          <div className="flex flex-col items-center" style={{ gap: 46 }}>
-            {NAV_CARDS.map(card => (
-              <button key={card.key} onClick={() => setView({ type: card.key })} className="relative rounded-3xl overflow-hidden shadow-md active:scale-[0.98] transition-transform" style={{ width: 382, height: 114 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={card.img} alt={card.label} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
-                  <span className="text-white drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 24, lineHeight: 1, textAlign: "center" }}>{card.label}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-          <button onClick={() => window.history.back()} className="flex items-center gap-1.5 bg-[#1B4332] text-white px-5 py-2 rounded-full text-[13px] font-medium mx-auto mt-7">
-            <ChevronLeft size={15} /> Volver
-          </button>
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
-
-  // ── HOUSEKEEPING ──────────────────────────────────────────────────────
-  if (view.type === "housekeeping") {
-    return (
-      <div className="min-h-svh bg-[#FFFBF3]">
-        <Header />
-        <div className="pb-28">
-          <SubHero title="Housekeeping" imageSrc={heroImg} onBack={goBack} />
-          <div className="px-4 py-5 md:max-w-3xl md:mx-auto">
-            {housekeepingItems.length > 0 ? (
-              housekeepingItems.map(item => (
-                <div key={item.id} className="mb-5">
-                  <h2 className="font-semibold text-[#3D2B1F] text-[15px] mb-1">{item.title}</h2>
-                  <p className="text-[#6B6B6B] text-[13px] leading-relaxed whitespace-pre-line">{item.content}</p>
-                </div>
-              ))
-            ) : (
-              <div className="mb-5">
-                <p className="font-semibold text-[#3D2B1F] text-[14px] mb-2">Horarios de Atención:</p>
-                <p className="text-[#6B6B6B] text-[13px]"><span className="font-semibold text-[#1B4332]">Housekeeping:</span> 08:30 a 23:00</p>
-                <p className="text-[#6B6B6B] text-[13px]"><span className="font-semibold text-[#1B4332]">Almuerzo:</span> 08:30 a 16:00</p>
-              </div>
-            )}
-            {lavanderiaItems.length > 0 && (
-              <>
-                <hr className="border-[#E0D8CC] my-4" />
-                <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, lineHeight: 1, color: '#54432B', textAlign: 'center', letterSpacing: 0 }} className="mb-3">Lavandería</h2>
-                {lavanderiaItems.map(item => {
-                  const isHeader = item.title === "Lavandería";
-                  const lines = (item.content ?? "").split("\n").filter(l => l.trim());
-                  return (
-                    <div key={item.id} className="bg-[#F3EDE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-4 mb-3">
-                      <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, lineHeight: 1, color: "#54432B" }} className="mb-2">{item.title}</h3>
-                      {isHeader ? (
-                        <p className="text-[#6B6B6B] text-[13px] leading-relaxed">{item.content}</p>
-                      ) : (
-                        <ul className="flex flex-col gap-1">
-                          {lines.map((l, i) => (
-                            <li key={i} className="flex items-center gap-2 text-[#6B6B6B] text-[13px]">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]/40 shrink-0" />
-                              {l}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            )}
-          </div>
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
-
-  // ── INFORMACIÓN MENU ──────────────────────────────────────────────────
-  if (view.type === "info_menu") {
-    return (
-      <div className="min-h-svh bg-[#FFFBF3]">
-        <Header />
-        <div className="pb-28">
-          <SubHero title="Información" imageSrc={navImgs.img_informacion} onBack={goBack} />
-          <div className="px-4 py-5 flex flex-col gap-3 md:max-w-3xl md:mx-auto">
-            {INFO_SECTIONS.map(sec => (
-              <button key={sec.key} onClick={() => setView({ type: "info_detail", section: sec.key, label: sec.label })} className={`flex justify-between items-center px-4 py-4 rounded-xl text-left shadow-sm ${sec.emergency ? "bg-[#D4722A]" : "bg-[#F3ECE4] border border-[#EDE6D8]"}`}>
-                <span className={`text-[15px] font-medium ${sec.emergency ? "text-white" : "text-[#3D2B1F]"}`}>{sec.label}</span>
-                <ChevronRight size={18} className={sec.emergency ? "text-white" : "text-[#9B9280]"} />
-              </button>
-            ))}
-          </div>
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
-
-  // ── INFO DETAIL ───────────────────────────────────────────────────────
-  if (view.type === "info_detail") {
-    const { section, label } = view;
-    const isEmergencia = section === "emergencia";
-    const sectionItems = info.filter(i => i.section === section);
-    const sectionImgKey = section === "caja" ? "img_caja" : section === "protocolo" ? "img_protocolo" : "img_emergencia";
-    const sectionHeroImg = infoImgs[sectionImgKey as keyof typeof infoImgs];
-    return (
-      <div className="min-h-svh bg-[#FFFBF3]">
-        <Header />
-        <div className="pb-28">
-          {isEmergencia ? (
-            <div className="relative w-full flex flex-col items-center justify-center rounded-b-3xl" style={{ height: 378, background: "linear-gradient(119.4deg, #AF4E2B 8.15%, #DB7C59 54.08%, #AF4E2B 100%)" }}>
-              <h1 className="text-white drop-shadow-lg mb-6" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 40, lineHeight: 1, textAlign: "center" }}>{label}</h1>
-              <button onClick={goBack} className="bg-white/90 text-[#DB7C59] px-5 py-2 rounded-full text-[13px] font-semibold flex items-center gap-1 shadow-sm">
-                <ChevronLeft size={14} /> Volver
-              </button>
-            </div>
-          ) : (
-            <SubHero title={label} imageSrc={sectionHeroImg} onBack={goBack} />
-          )}
-          <div className="px-4 py-5 md:max-w-3xl md:mx-auto">
-            {isEmergencia ? (
-              <div className="flex flex-col items-center gap-5 text-center">
-                <p className="text-[#4A4A4A] text-[14px] leading-relaxed">
-                  Si necesitas atención médica inmediata,<br />
-                  comunícate con la recepción llamando<br />desde tu habitación al:
-                </p>
-                <a href="tel:3500" className="inline-block bg-[#DB7C59] text-white font-semibold text-[16px] px-10 py-3 rounded-full active:opacity-80">3500</a>
-                <p className="text-[#4A4A4A] text-[14px] leading-relaxed">Si te encuentras fuera del Hotel, llama al:</p>
-                <a href="tel:+56223223500" className="inline-block bg-[#DB7C59] text-white font-semibold text-[16px] px-8 py-3 rounded-full active:opacity-80">+562 2322 3500</a>
-              </div>
-            ) : (
-              sectionItems.length > 0 ? (
-                <div className="flex flex-col gap-5">
-                  {sectionItems.map(item => {
-                    const isZona = /^Zona\s+[A-Z]/i.test(item.title);
-                    return (
-                      <div key={item.id}>
-                        {section === "protocolo" ? (
-                          isZona ? (
-                            <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, lineHeight: 1, color: "#54432B" }} className="mb-1">{item.title}</h3>
-                          ) : (
-                            <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, lineHeight: 1, color: "#54432B", textAlign: "center" }} className="mb-3">{item.title}</h3>
-                          )
-                        ) : section === "caja" ? (
-                          <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, lineHeight: 1, color: "#54432B", textAlign: "center" }} className="mb-3">{item.title}</h3>
-                        ) : (
-                          <h3 className="font-semibold text-[#1B4332] text-[15px] mb-1">{item.title}</h3>
-                        )}
-                        <p className="text-[#6B6B6B] text-[13px] leading-relaxed whitespace-pre-line">{item.content}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-[#9B9280] text-center py-10 text-[14px]">Sin información disponible aún.</p>
-              )
-            )}
-          </div>
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
-
-  // ── PRODUCTOS ─────────────────────────────────────────────────────────
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
       <Header />
-      <div className="pb-28">
-        <SubHero title="Productos" imageSrc={navImgs.img_productos} onBack={goBack} />
-        <div className="px-4 py-5 md:max-w-3xl md:mx-auto">
-          {/* ── Lavandería ── */}
-          {allProductCats.length > 0 && (
-            <>
-              <p className="text-center mb-5" style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 400, fontSize: 16, lineHeight: 1, color: "#54432B" }}>Para su comodidad y ante cualquier olvido, el hotel dispone de una selección de artículos esenciales que puede adquirir directamente en el hotel.</p>
-              <div className="flex flex-col gap-2 mb-6">
-                {allProductCats.map(cat => (
-                  <div key={cat} className="bg-[#F3EDE4] rounded-xl border border-[#EDE6D8] overflow-hidden shadow-sm">
-                    <button onClick={() => setOpenAccordion(openAccordion === cat ? null : cat)} className="w-full flex justify-between items-center px-4 py-3.5">
-                      <span style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, lineHeight: 1, color: "#54432B" }} className="text-left">{cat}</span>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[#9B9280] text-[12px]">{productsByCategory[cat]?.length} artículos</span>
-                        {openAccordion === cat ? <ChevronUp size={15} className="text-gray-400" /> : <ChevronDown size={15} className="text-gray-400" />}
-                      </div>
-                    </button>
-                    {openAccordion === cat && (
-                      <div className="border-t border-[#EDE6D8] px-4 py-3 flex flex-col gap-2.5">
-                        {productsByCategory[cat].map(p => (
-                          <div key={p.id} className="flex justify-between items-center">
-                            <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 400, fontSize: 15, lineHeight: 2, color: "#54432B" }}>{p.name}</span>
-                            {p.price && <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 400, fontSize: 15, lineHeight: 2, color: "#DBA33B" }}>{p.price}</span>}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+
+      {/* Nav bar — below header, above hero (Figma: Barra Superior Habitación) */}
+      <div className="bg-[#1B4332] sticky top-0 z-20" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+        <div className="flex gap-1 overflow-x-auto no-scrollbar px-3 py-2 md:justify-center">
+          {visible.map(t => (
+            <button
+              key={t.key}
+              onClick={() => scrollTo(t.key)}
+              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#2D6A4F] text-white" : "text-white/85 hover:text-white"}`}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Hero */}
+      <div className="relative overflow-hidden shadow-lg" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+        <img src={heroImg} alt="Habitación" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>Habitación</h1>
+        </div>
+        <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[14px] font-semibold px-6 py-2 rounded-full active:opacity-80 flex items-center gap-1.5">
+            <span style={{ fontSize: 11 }}>‹</span> Volver
+          </button>
+        </div>
+      </div>
+
+      {/* Single continuous scroll — sections in Figma order, separated by hairlines */}
+      <div className="px-6 py-7 pb-24 md:pb-12 md:max-w-3xl md:mx-auto">
+        {visible.map((sec, idx) => (
+          <section
+            key={sec.key}
+            ref={el => { sectionRefs.current[sec.key] = el; }}
+            className={idx > 0 ? "pt-7 mt-7" : ""}
+            style={idx > 0 ? { borderTop: "1px solid #E8DDD0", scrollMarginTop: 56 } : { scrollMarginTop: 56 }}
+          >
+            <SectionBody
+              secKey={sec.key}
+              label={sec.label}
+              rows={rowsBySection[sec.key] ?? []}
+              openLav={openLav}
+              setOpenLav={setOpenLav}
+            />
+          </section>
+        ))}
+      </div>
+
       <BottomNav />
     </div>
+  );
+}
+
+function SectionBody({ secKey, label, rows, openLav, setOpenLav }: {
+  secKey: string;
+  label: string;
+  rows: InfoItem[];
+  openLav: string | null;
+  setOpenLav: (v: string | null) => void;
+}) {
+  // ── Servicios de Aseo (housekeeping) ──
+  if (secKey === "housekeeping") {
+    return (
+      <>
+        <SectionTitle>{label}</SectionTitle>
+        {rows.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {rows.map(item => (
+              <div key={item.id}>
+                <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">{item.title}</h3>
+                <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{item.content}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>
+            <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">Horarios de Atención:</h3>
+            <p className="text-[#3D2B1F] text-[14px]" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>Housekeeping: 08:30 a 23:00</p>
+            <p className="text-[#3D2B1F] text-[14px]" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>Almuerzo: 08:30 a 16:00</p>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ── Lavandería — collapsible price cards (Figma) ──
+  if (secKey === "lavanderia") {
+    return (
+      <>
+        <SectionTitle>{label}</SectionTitle>
+        <div className="flex flex-col gap-3">
+          {rows.map(item => {
+            const open = openLav === item.title;
+            const lines = (item.content ?? "").split("\n").filter(l => l.trim());
+            return (
+              <div key={item.id} className="bg-[#F3EDE4] rounded-2xl overflow-hidden" style={{ border: "1px solid #EDE6D8" }}>
+                <button onClick={() => setOpenLav(open ? null : item.title)} className="w-full flex justify-between items-center px-4 py-3.5">
+                  <span style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, lineHeight: 1, color: "#54432B" }} className="text-left">{item.title}</span>
+                  {open ? <ChevronUp size={16} className="text-[#B9AE9C] shrink-0" /> : <ChevronDown size={16} className="text-[#B9AE9C] shrink-0" />}
+                </button>
+                {open && (
+                  <div className="px-4 pb-4 flex flex-col">
+                    {lines.map((l, i) => {
+                      const [name, price] = l.split(/\s+—\s+/);
+                      return (
+                        <div key={i} className="flex justify-between items-center py-[7px]" style={i > 0 ? { borderTop: "1px solid #EAE2D4" } : {}}>
+                          <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#54432B" }}>{name}</span>
+                          {price && <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, fontWeight: 600, color: "#DBA33B" }}>{price}</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
+
+  // ── Generic info section — plain text on cream (Figma style, no cards) ──
+  // First row whose title equals the section label provides the intro paragraph.
+  const intro = rows.find(r => r.title === label || r.title === label.replace("Menú de ", "Menú de "));
+  const rest = rows.filter(r => r !== intro);
+  return (
+    <>
+      <SectionTitle>{label}</SectionTitle>
+      {intro && (
+        <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line mb-4" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
+          {intro.content}
+        </p>
+      )}
+      <div className="flex flex-col gap-4">
+        {rest.map(item => (
+          <div key={item.id}>
+            <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">
+              {item.title}
+            </h3>
+            <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
+              {item.content}
+            </p>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

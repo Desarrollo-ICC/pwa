@@ -4,14 +4,38 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 
-const RESTAURANTS = [
+const DEFAULT_RESTAURANTS = [
   { key: "arboleda",  href: "/restaurantes/arboleda",  label: "Arboleda",    desc: "Restaurante principal · Vinos & Fine Dining", defaultImg: "/images/arboleda.jpg" },
   { key: "lagrieta",  href: "/restaurantes/la-grieta", label: "La Grieta",   desc: "Bar & comida informal · Cócteles & Música",   defaultImg: "/images/lagrieta.jpg" },
   { key: "muffin",    href: "/restaurantes/muffin",    label: "Muffin Café", desc: "Cafetería · Pastelería & Bebidas",            defaultImg: "/images/muffin.jpg" },
 ];
 
+type Card = { key: string; href: string; label: string; desc: string; defaultImg: string };
+
 export default function RestaurantesPage() {
   const [imgs, setImgs] = useState<Record<string, string>>({});
+  const [RESTAURANTS, setRestaurants] = useState<Card[]>(DEFAULT_RESTAURANTS);
+
+  // Tarjetas editables desde el admin (Páginas de Información → ui-comer-y-beber)
+  useEffect(() => {
+    fetch("/api/info-pages?page=ui-comer-y-beber")
+      .then(r => r.json())
+      .then(d => {
+        const rows = (d.blocks ?? []).filter((b: { block: string }) => b.block === "link");
+        if (!rows.length) return;
+        setRestaurants(rows.map((b: { title: string; content: string; image: string | null }) => {
+          const base = DEFAULT_RESTAURANTS.find(x => x.href === b.content);
+          return {
+            key: base?.key ?? b.content,
+            href: b.content,
+            label: b.title,
+            desc: base?.desc ?? "",
+            defaultImg: b.image ?? base?.defaultImg ?? "/images/arboleda.jpg",
+          };
+        }));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch("/api/familia").then(r => r.json()).then(d => {

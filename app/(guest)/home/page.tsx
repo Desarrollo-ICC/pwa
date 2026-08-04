@@ -12,12 +12,14 @@ interface Activity { id: number; season: string; category: string; name: string;
 interface Weather { temp: number; feelsLike: number; humidity: number; windSpeed: number; code: number; }
 interface Event { id: number; day: string; month: string; time: string; title: string; description: string | null; location: string | null; }
 
-const quickLinks = [
-  { href: "/habitacion",   label: "Mi Habitación",              iconClass: "fi-ts-bed-alt" },
-  { href: "/restaurantes", label: "Comer y Beber",              iconClass: "fi-ts-utensils" },
-  { href: "/wellness",     label: "Wellness & Spa",             iconClass: "fi-ts-hot-tub" },
-  { href: "/actividades",  label: "Experiencias y Actividades", iconClass: "fi-ts-mountain" },
-  { href: "/familia",      label: "Familia y Niños",            iconClass: "fi-ts-family" },
+// Accesos rápidos — orden y etiquetas del Figma (PWA- Home)
+const DEFAULT_QUICK_LINKS = [
+  { href: "/restaurantes",             label: "Comer y Beber",              iconClass: "fi-ts-utensils" },
+  { href: "/info/mi-estadia",          label: "Mi Estadía",                 iconClass: "fi-ts-bed-alt" },
+  { href: "/wellness",                 label: "Bienestar",                  iconClass: "fi-ts-hot-tub" },
+  { href: "/actividades",              label: "Experiencias y Actividades", iconClass: "fi-ts-mountain" },
+  { href: "/info/informacion-general", label: "Información General",        iconClass: "fi-ts-info" },
+  { href: "/info/ski",                 label: "Ski",                        iconClass: "fi-ts-skiing" },
 ];
 
 function weatherIcon(code: number): string {
@@ -145,6 +147,9 @@ export default function HomePage() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [weather, setWeather] = useState<Weather | null>(null);
+  // Accesos rápidos y textos de emergencia editables desde el admin (ui-home)
+  const [quickLinks, setQuickLinks] = useState(DEFAULT_QUICK_LINKS);
+  const [ui, setUi] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const stored = localStorage.getItem("htch_guest");
@@ -152,6 +157,21 @@ export default function HomePage() {
     const { name } = JSON.parse(stored);
     setGuestName(name.split(" ")[0]);
     setReady(true);
+
+    fetch("/api/info-pages?page=ui-home")
+      .then((r) => r.json())
+      .then((d) => {
+        const rows = d.blocks ?? [];
+        const ls = rows.filter((b: { block: string }) => b.block === "link");
+        if (ls.length) setQuickLinks(ls.map((b: { title: string; content: string }) => ({
+          href: b.content, label: b.title,
+          iconClass: DEFAULT_QUICK_LINKS.find(q => q.href === b.content)?.iconClass ?? "fi-ts-info",
+        })));
+        const m: Record<string, string> = {};
+        for (const b of rows) if (b.title) m[b.title] = b.content ?? "";
+        setUi(m);
+      })
+      .catch(() => {});
 
     fetch("/api/alerts")
       .then((r) => r.json())
@@ -209,7 +229,7 @@ export default function HomePage() {
       <div className="mt-6 pb-24 md:pb-12">
         <div className="px-4 md:max-w-5xl md:mx-auto">
           <p className="font-playfair text-[#3D2B1F] text-[32px] md:text-[36px] font-bold text-center mb-5">
-            ¿En qué podemos<br />ayudarte hoy?
+            Encuentra toda la información<br />que necesites aquí
           </p>
 
           {/* Quick links grid — 5 items, 3+2 on mobile, all in one row on desktop */}
@@ -298,19 +318,6 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Experiencias de esta Temporada */}
-        {seasonActivities.length > 0 && (
-          <div className="mt-7">
-            <p className="font-playfair text-[#3D2B1F] text-[32px] font-bold text-center mb-4 px-7 leading-none">
-              Experiencias de<br />esta Temporada
-            </p>
-            {/* Slider wrapper */}
-            <SliderWithArrows>
-              {seasonActivities.map((a) => <ActivityCard key={a.id} a={a} />)}
-            </SliderWithArrows>
-          </div>
-        )}
-
         {/* Próximos eventos + Emergencia */}
         <div className="mt-7 md:max-w-5xl md:mx-auto px-4">
           {/* Próximos eventos */}
@@ -349,18 +356,18 @@ export default function HomePage() {
                 Emergencia
               </h2>
               <p className="text-[#4A4A4A] text-[13px] leading-relaxed mb-4">
-                Si necesitas atención médica inmediata,<br />comunícate con la recepción llamando al:
+                {ui["Emergencia — intro"] ?? "Si necesitas atención médica inmediata, comunícate con la recepción llamando al:"}
               </p>
               <a href="tel:3500" className="inline-flex items-center gap-2 bg-[#B85C45] text-white font-semibold text-[16px] px-8 py-2.5 rounded-full mb-5 active:opacity-80">
                 <i className="fi-rs-phone-call" style={{ fontSize: 16 }} />
-                3500
+                {ui["Emergencia — teléfono interno"] ?? "3500"}
               </a>
               <p className="text-[#4A4A4A] text-[13px] leading-relaxed mb-4">
                 Si te encuentras fuera del Hotel, llama al:
               </p>
               <a href="tel:+56223223500" className="inline-flex items-center gap-2 bg-[#B85C45] text-white font-semibold text-[16px] px-8 py-2.5 rounded-full active:opacity-80">
                 <i className="fi-rs-phone-call" style={{ fontSize: 16 }} />
-                +562 2322 3500
+                {ui["Emergencia — teléfono externo"] ?? "+562 2322 3500"}
               </a>
             </div>
           </div>

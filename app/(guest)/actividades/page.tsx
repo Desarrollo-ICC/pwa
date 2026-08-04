@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 
@@ -14,31 +15,30 @@ interface Activity {
 }
 
 const CATEGORY_ORDER_VERANO = [
-  "Caminatas y Trekkings",
+  "Caminatas y Trekking",
   "Bicicleta",
   "Contemplación y Recreación",
-  "Bienestar y Talleres",
+  "Bienestar y Talleres Indoor",
+  "Niños",
   "Otras Actividades",
 ];
 
 const CATEGORY_ORDER_INVIERNO = [
-  "Centro de Ski",
   "Deportes de Nieve",
-  "Exploración y Naturaleza",
+  "Exploración & Naturaleza",
   "Bienestar y Talleres Indoor",
-  "Otras Actividades",
+  "Niños",
 ];
 
 const CAT_FALLBACKS: Record<string, string> = {
-  "Caminatas y Trekkings":      "/images/actividades.jpg",
+  "Caminatas y Trekking":       "/images/actividades.jpg",
   "Bicicleta":                  "/images/actividades.jpg",
   "Contemplación y Recreación": "/images/login-bg.jpg",
-  "Bienestar y Talleres":       "/images/spa.jpg",
-  "Otras Actividades":          "/images/home-hero.jpg",
-  "Centro de Ski":              "/images/actividades.jpg",
-  "Deportes de Nieve":          "/images/actividades.jpg",
-  "Exploración y Naturaleza":   "/images/login-bg.jpg",
   "Bienestar y Talleres Indoor":"/images/spa.jpg",
+  "Otras Actividades":          "/images/home-hero.jpg",
+  "Niños":                      "/images/ninos.jpg",
+  "Deportes de Nieve":          "/images/actividades.jpg",
+  "Exploración & Naturaleza":   "/images/login-bg.jpg",
 };
 
 function catKey(cat: string) {
@@ -318,12 +318,40 @@ export default function ActividadesPage() {
   const [season, setSeason] = useState<"verano" | "invierno">("verano");
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const cat = searchParams.get("cat");
+    if (cat) {
+      setSelectedCat(cat);
+      if (cat === "Centro de Ski" || cat.startsWith("SKI")) setSeason("invierno");
+    }
+  }, [searchParams]);
   const [catImgMap, setCatImgMap] = useState<Record<string, string>>({});
+  const [clubs, setClubs] = useState<Activity[]>([]);
+  // Textos editables desde el admin (Páginas de Información → ui-actividades)
+  const [ui, setUi] = useState<Record<string, { title: string; content: string }>>({});
 
   useEffect(() => {
     fetch("/api/actividades")
       .then((r) => r.json())
       .then((d) => setActivities(d.activities ?? []));
+    fetch("/api/info-pages?page=ui-actividades")
+      .then((r) => r.json())
+      .then((d) => {
+        const m: Record<string, { title: string; content: string }> = {};
+        for (const b of (d.blocks ?? [])) m[b.title ?? b.block] = { title: b.title ?? "", content: b.content ?? "" };
+        setUi(m);
+      })
+      .catch(() => {});
+    fetch("/api/familia")
+      .then((r) => r.json())
+      .then((d) => {
+        const rows = (d.programs ?? []).filter((p: { type: string }) => p.type === "club");
+        setClubs(rows.map((p: { id: number; name: string; description: string | null; image: string | null }) => ({
+          id: 100000 + p.id, season: "", category: "Niños", name: p.name, description: p.description, price: null, image: p.image,
+        })));
+      });
     fetch("/api/habitacion/info")
       .then((r) => r.json())
       .then((d) => {
@@ -339,6 +367,7 @@ export default function ActividadesPage() {
       });
   }, []);
 
+  const uiText = (key: string, fallback: string) => ui[key]?.content ?? fallback;
   const getCatImg = (cat: string) => catImgMap[cat] ?? CAT_FALLBACKS[cat] ?? "/images/actividades.jpg";
 
   const CATEGORY_ORDER = season === "verano" ? CATEGORY_ORDER_VERANO : CATEGORY_ORDER_INVIERNO;
@@ -408,6 +437,18 @@ export default function ActividadesPage() {
                     </div>
                   </button>
                 ))}
+                <div className="w-full max-w-sm border-t border-[#E8DDD0] pt-5">
+                  <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 24, color: "#54432B" }} className="mb-2">Cuidado del Entorno</h3>
+                  <p className="text-[#3D2B1F] text-[13px] leading-relaxed mb-2">{uiText("Cuidado del Entorno", "Nos comprometemos a mantener el bosque en su estado natural y te pedimos que nos acompañes en ese cuidado:")}</p>
+                  <ul className="flex flex-col gap-1.5">
+                    {uiText("Cuidado del Entorno — puntos", "Regresa siempre con tu basura al hotel.\nEvita fumar o encender fuego fuera de las áreas permitidas.\nDurante el verano el riesgo de incendios es muy alto. Tu precaución protege el entorno de todos.").split("\n").filter(Boolean).map((t, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]/40 shrink-0 mt-1.5" />
+                        <span className="text-[#3D2B1F] text-[13px] leading-relaxed">{t}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 <button onClick={() => window.history.back()} className="bg-[#1B4332] text-white px-6 py-2 rounded-full text-[14px] font-semibold active:opacity-80 mb-20">Volver</button>
               </div>
             )}
@@ -438,7 +479,7 @@ export default function ActividadesPage() {
             </div>
 
             <div className="pt-2 md:max-w-4xl md:mx-auto">
-              {selectedCat === "Caminatas y Trekkings" && (
+              {selectedCat === "Caminatas y Trekking" && (
                 <div className="px-5 pt-4 pb-2 text-center">
                   <p className="text-[#3D2B1F] text-[14px] leading-relaxed">Exploración del entorno natural. Snacks incluidos y cocktail en salidas de puesta de sol.</p>
                   <p className="text-[#9B9280] text-[13px] mt-2">Para más información, acércate al mesón de recepción</p>
@@ -451,13 +492,32 @@ export default function ActividadesPage() {
                   {freeActs.length > 0 && (
                     <>
                       <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>Actividades Gratuitas</h3>
+                      <p className="text-[#3D2B1F] text-[14px] text-center px-6 mb-1">{uiText("Actividades Gratuitas", "Acceso a espacios deportivos y recreativos en las dependencias del hotel.")}</p>
+                      <p className="text-[#9B9280] text-[13px] text-center px-6 mb-1">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
                       <ActivitySlider activities={freeActs} catImage={getCatImg(selectedCat)} />
                     </>
                   )}
                   {paidActs.length > 0 && (
                     <>
                       <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>Actividades con Costo Extra</h3>
+                      <p className="text-[#3D2B1F] text-[14px] text-center px-6 mb-1">{uiText("Actividades con Costo Extra", "Experiencias para explorar el entorno.")}</p>
+                      <p className="text-[#9B9280] text-[13px] text-center px-6 mb-1">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
                       <ActivitySlider activities={paidActs} catImage={getCatImg(selectedCat)} />
+                    </>
+                  )}
+                </>
+              ) : selectedCat === "Niños" ? (
+                <>
+                  {catActivities.length > 0 && (
+                    <>
+                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 32, lineHeight: 1, color: '#54432B' }}>Actividades de Temporada</h3>
+                      <ActivitySlider activities={catActivities} catImage={getCatImg(selectedCat)} />
+                    </>
+                  )}
+                  {clubs.length > 0 && (
+                    <>
+                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 32, lineHeight: 1, color: '#54432B' }}>Actividades</h3>
+                      <ActivitySlider activities={clubs} catImage={getCatImg(selectedCat)} />
                     </>
                   )}
                 </>
@@ -468,7 +528,7 @@ export default function ActividadesPage() {
 
             <div className="px-5 mt-6 mb-8 text-center">
               <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: 1, color: '#DB7C59', textAlign: 'center' }}>
-                Las actividades full day son operadas por proveedor externo y tienen costo adicional.
+                {uiText("Nota full day", "Las actividades full day son operadas por proveedor externo y tienen costo adicional.")}
               </p>
             </div>
           </div>

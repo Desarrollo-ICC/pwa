@@ -14,8 +14,8 @@ const NAV_ITEMS = [
   { href: "/restaurantes",labelKey: "nav.restaurants",   iconClass: "fi-ts-utensils" },
   { href: "/actividades", labelKey: "nav.activities",    iconClass: "fi-ts-mountain" },
   { href: "/wellness",    labelKey: "nav.wellness",      iconClass: "fi-ts-hot-tub" },
-  { href: "/familia",     labelKey: "nav.family",        iconClass: "fi-ts-family" },
-  { href: "/emergencia",  labelKey: "nav.emergency",     iconClass: "fi-ts-phone-call" },
+  { href: "/info/mi-estadia",   labelKey: "nav.stay",      iconClass: "fi-ts-family" },
+  { href: "/info/emergencias",  labelKey: "nav.emergency", iconClass: "fi-ts-phone-call" },
 ];
 
 const LANGS: { code: Locale; flag: string; label: string }[] = [

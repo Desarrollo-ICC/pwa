@@ -7,18 +7,22 @@ interface Activity { id: number; season: string; category: string; name: string;
 interface RoomInfoItem { id?: number; section: string; content: string; }
 
 const CATEGORIES_VERANO = [
-  "Caminatas y Trekkings",
+  "Caminatas y Trekking",
   "Bicicleta",
   "Contemplación y Recreación",
-  "Bienestar y Talleres",
+  "Bienestar y Talleres Indoor",
+  "Niños",
   "Otras Actividades",
 ];
 
 const CATEGORIES_INVIERNO = [
-  "Centro de Ski",
   "Deportes de Nieve",
-  "Exploración y Naturaleza",
+  "Exploración & Naturaleza",
   "Bienestar y Talleres Indoor",
+  "Niños",
+  "SKI – Renta por Día",
+  "SKI – Renta Semanal",
+  "SKI – Servicios",
 ];
 
 const CATEGORIES = [...CATEGORIES_VERANO, ...CATEGORIES_INVIERNO];
