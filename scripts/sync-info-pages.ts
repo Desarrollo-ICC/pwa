@@ -13,6 +13,8 @@ function B(block: string, title: string | null, content: string | null) {
   rows.push({ page, pageTitle, block, title, content, active: true, order: ++ord });
 }
 const text = (t: string | null, c: string) => B('text', t, c);
+// hero: imagen de cabecera (no se renderiza como bloque)
+const hero = (img: string) => { rows.push({ page, pageTitle, block: 'hero', title: 'Imagen de cabecera', content: null, image: img, active: true, order: 0 }); };
 const intro = (c: string) => B('intro', null, c);
 const note = (c: string) => B('note', null, c);
 const link = (label: string, href: string, img?: string) => {
@@ -27,6 +29,7 @@ const card = (t: string, desc: string, place: string, img?: string) => {
 
 // ══ MI ESTADÍA (menu) ══
 P('mi-estadia', 'Mi Estadía');
+hero('/images/fig-servicios-incluidos.jpg');
 link('Servicios Incluídos', '/info/servicios-incluidos', '/images/fig-servicios-incluidos.jpg');
 link('Check-In y Check-Out', '/info/check-in', '/images/fig-check-in.jpg');
 link('Guardería', '/info/guarderia', '/images/fig-guarderia.jpg');
@@ -35,11 +38,13 @@ link('Uso de Llaves y Cerraduras', '/info/uso-llaves', '/images/fig-uso-llaves.j
 
 // ══ SERVICIOS INCLUÍDOS ══
 P('servicios-incluidos', 'Servicios Incluídos');
+hero('/images/fig-servicios-incluidos.jpg');
 intro('Los servicios incluidos pueden variar según la tarifa de tu reserva. Si tienes alguna duda sobre los beneficios disponibles durante tu estadía, nuestro equipo de Front Desk estará encantado de ayudarte.');
 text('Traslados', 'El hotel no cuenta con servicio de traslado propio.\n\nEn caso de que necesite gestionar su salida, le recomendamos acercarse con al menos 24 hrs de anticipación al front desk donde le podremos ayudar a gestionar el servicio de traslado.\n\n(*) En caso de requerir servicios adicionales (sillas de bebé o alzadores) es importante verificarlo directamente con la empresa de transporte, pues podría tener un costo adicional, sujeto a disponibilidad.');
 
 // ══ CHECK-IN Y CHECK-OUT ══
 P('check-in', 'Check-In y Check-Out');
+hero('/images/fig-check-in.jpg');
 text('Horarios:', 'Check-in: desde las 16:00 hrs.\nCheck-out: hasta las 12:00 hrs.');
 text('Late Check-Out:', 'Sujeto a Disponibilidad*\nHasta las 16:00 hrs.: 50% de la tarifa diaria por persona (incluye almuerzo).\nDesde las 16:00 hrs.: 100% de la tarifa diaria por persona.');
 link('Programa del Viajero', '/info/programa-viajero');
@@ -49,6 +54,7 @@ link('Estacionamientos', '/info/estacionamientos');
 
 // ══ PROGRAMA DEL VIAJERO ══
 P('programa-viajero', 'Programa del Viajero');
+hero('/images/fig-check-in.jpg');
 text('¿Qué Debo Empacar?', 'El clima de montaña es tan dinámico como el paisaje. Para que aproveches cada momento, te compartimos algunas recomendaciones.');
 text('Temperaturas Según la Época del Año', 'Verano (diciembre – febrero) Temperaturas entre 18 °C y 30 °C, cielos despejados y baja probabilidad de lluvias. La época ideal para senderismo, cicloturismo y paseos por el valle.\n\nPrimavera y Otoño (marzo – abril / octubre – noviembre) Temperaturas entre 12 °C y 20 °C con lluvias moderadas. El bosque se transforma ofreciendo colores y sensaciones únicas.\n\nInvierno (junio – agosto) Temperaturas entre 0 °C y 15 °C con frecuentes nevadas. La temporada perfecta para esquí y actividades en la nieve.');
 text('Ropa Recomendada', 'Para disfrutar del hotel y de las actividades al aire libre te recomendamos traer ropa que pueda usarse en capas y así, adaptarte fácilmente a los cambios de temperatura.\nPrimera Capa: Ropa interior térmica de secado rápido.\nSegunda Capa: Ropa para mantenerse abrigado.\nTercera Capa: Chaqueta y pantalón cortaviento e impermeable.\n\nTambién incluye en tu maleta:\nTraje de Baño\nSandalias\nZapatos de trekking cómodos (evitar zapatillas de running).\n\nAccesorios:\nGorro para el sol y gorro de abrigo\nGuantes impermeables y cortaviento\nCuello tipo buff o bandana\nAnteojos con filtro UV\nBloqueador solar y protector labial\nRepelente de insectos\nBotella de agua recargable\nMochila pequeña');
@@ -59,6 +65,7 @@ text('En Tren desde Santiago', 'De Estación Central a Estación Chillán, 5 hor
 
 // ══ PLAN DE INVIERNO ══
 P('plan-invierno', 'Plan de Invierno');
+hero('/images/fig-check-in.jpg');
 intro('Saca el máximo provecho a tu estadía siguiendo estas recomendaciones:');
 text('Disfruta los espacios del hotel', 'Espacios pensados para toda la familia, salones, áreas de descanso y actividades recreativas para complementar tu experiencia.');
 text('Prepárate para el clima', 'Viste en capas con ropa térmica e impermeable. Utiliza guantes, gorro, lentes de sol y protector solar.\nPrefiere calzado antideslizante para caminar sobre nieve o hielo.\nLleva traje de baño y sandalias para disfrutar de las piscinas y termas.');
@@ -69,20 +76,24 @@ note('Si necesitas más información, nuestro equipo de front desk estará encan
 
 // ══ PREPARATIVOS PARA EL ASCENSO ══
 P('preparativos', 'Preparativos Para el Ascenso');
+hero('/images/fig-check-in.jpg');
 text('Seguridad en la Ruta:', 'Por las condiciones de la montaña, es obligatorio el uso de cadenas en su vehículo para garantizar un trayecto seguro hacia el hotel.');
 text('Vestimenta adecuada', 'Le sugerimos vestir por capas y contar con ropa técnica impermeable, guantes y protección solar. Si desea disfrutar de nuestras aguas, no olvide su traje de baño.');
 text('Equipamiento', 'En el hotel disponemos de un servicio de arriendo de equipos de ski y snowboard, por lo que no es estrictamente necesario traer los suyos.');
 
 // ══ ESTACIONAMIENTOS ══
 P('estacionamientos', 'Estacionamientos');
+hero('/images/fig-check-in.jpg');
 text('Estacionamientos', 'Contamos con estacionamiento en el Nivel -1 del Edificio Conference. Contamos con Accesibilidad y espacios aptos para electromovilidad.');
 
 // ══ USO DE LLAVES (placeholder in Figma) ══
 P('uso-llaves', 'Uso de Llaves y Cerraduras');
+hero('/images/fig-uso-llaves.jpg');
 text('Uso de Llaves y Cerraduras', 'Contenido pendiente de definir.');
 
 // ══ INFORMACIÓN GENERAL (menu) ══
 P('informacion-general', 'Información General');
+hero('/images/fig-hero-hotel.jpg');
 link('Reglamento & Políticas del Hotel', '/info/reglamento');
 link('Tiendas', '/info/tiendas');
 link('Espacios', '/info/espacios');
@@ -90,17 +101,20 @@ link('Políticas de Reserva', '/info/politicas-reserva');
 
 // ══ TIENDAS (menu) ══
 P('tiendas', 'Tiendas');
+hero('/images/fig-hero-tiendas.jpg');
 link('Backcountry Store', '/info/backcountry-store');
 link('Venta en Recepción', '/info/venta-recepcion');
 link('Artículos Spa', '/info/articulos-spa');
 
 // ══ BACKCOUNTRY STORE ══
 P('backcountry-store', 'Backcountry Store');
+hero('/images/fig-hero-tiendas.jpg');
 text('Horarios:', 'Invierno: 08:30 a 13:00 y 15:00 a 18:30\nVerano: 10:00 a 13:30 y 14:30 a 18:00');
 intro('Todo lo que necesitas para tu aventura en la montaña, ubicada en el primer piso del Hotel.\n\nEncontrarás una selección de artículos para disfrutar al máximo la montaña. Tales como, accesorios de nieve (antiparras, guantes, cascos, calcetines de ski y primeras capas), ropa de trekking, chaquetas y pantalones impermeables, trajes de baño, barro termal, artículos de aseo personal y recuerdos como postales e imanes.\n\nLe invitamos a visitarnos y encontrar todo lo necesario para complementar su experiencia en la montaña.');
 
 // ══ VENTA EN RECEPCIÓN ══
 P('venta-recepcion', 'Venta en Recepción');
+hero('/images/fig-hero-tiendas.jpg');
 intro('Para su comodidad, en la Recepción del Hotel podrá encontrar a la venta artículos esenciales:');
 price('Cuidado Personal e Higiene', [
   ['Preservativos', '$3.000'], ['Crema de afeitar', '$8.000'], ['Desodorante', '$3.000'],
@@ -128,6 +142,7 @@ note('*Venta de artículos sujeta a disponibilidad');
 
 // ══ ARTÍCULOS SPA ══
 P('articulos-spa', 'Artículos Spa');
+hero('/images/fig-hero-tiendas.jpg');
 intro('Descubra una exclusiva selección de productos de aromaterapia, disponibles para su compra en la recepción de nuestro Spa Alunco y lleve la experiencia de bienestar a su hogar:');
 price('Listado de Productos', [
   ['Árbol de té', '$6.000'], ['Cedro', '$5.000'], ['Ciprés', '$7.500'], ['Eucaliptus', '$4.500'],
@@ -143,11 +158,13 @@ note('*Venta de artículos sujeta a disponibilidad');
 
 // ══ ESPACIOS ══
 P('espacios', 'Espacios');
+hero('/images/fig-hero-espacios.jpg');
 text('Canelo & Lenga', 'Espacios destinados a reuniones, trabajo y lectura. Para ofrecer un ambiente cómodo y tranquilo para todos los huéspedes, te invitamos a mantener silencio durante tu permanencia.\n\nConsulta reservas, tarifas y disponibilidad en Recepción.');
 text('Espacio de Lectura', 'Este lugar está diseñado para que vivas una experiencia de descanso en un ambiente silencioso y acogedor. Podrás leer tranquilamente y disfrutar de un momento de calma.\n\nDisponible las 24 horas · Piso 6');
 
 // ══ CIRCUITOS HIDROTERMALES ══
 P('circuitos-hidrotermales', 'Circuitos Hidrotermales');
+hero('/images/fig-hero-spa.jpg');
 text('Recomendaciones', 'Beba abundante agua y descanse cada vez que lo necesite.\n\nPreste atención a las señales del cuerpo, no se sobre exija y evite permanecer en el sauna más de lo recomendado.\n\nSi experimenta mareos, cansancio extremo u otros síntomas detenga el circuito y solicite asistencia al personal del Spa.\n\nEvite realizar más de un circuito por día para disfrutar a pleno de los beneficios.');
 text('Contraindicaciones', 'Si tiene presión arterial alta, enfermedades cardiovasculares, cirugías recientes u otra condición médica, la exposición a altas o bajas temperaturas podrían agravar la condición. Consulte con su médico antes de realizar los circuitos.\n\nNo se recomienda realizar los circuitos a personas embarazadas o bajo los efectos del alcohol o drogas.\n\nTome una ducha antes de comenzar los circuitos para eliminar lociones, cremas y toxinas.');
 text('Circuito Relajante', 'Duración Aproximada: 120 minutos.\nRecomendado para: Desconexión mental profunda.');
@@ -181,6 +198,7 @@ list('Circuito Purificante — Pasos', [
 
 // ══ SALA DE YOGA ══
 P('sala-yoga', 'Sala de Yoga & Meditaciones');
+hero('/images/fig-hero-spa.jpg');
 intro('Regala a tu día con un momento de conexión y bienestar.');
 note('Conoce horarios y disponibilidad consultando en el front desk.');
 card('Sesiones de Yoga', 'Diseñadas para ayudarte a relajarte, mejorar tu equilibrio y disfrutar plenamente de la tranquilidad de la montaña.', 'Sala de Yoga & Meditaciones', '/images/spa.jpg');
@@ -188,6 +206,7 @@ card('Actividades Guiadas', 'Combinan movimiento, respiración y conexión con e
 
 // ══ PISCINAS ══
 P('piscinas', 'Piscinas');
+hero('/images/fig-hero-piscinas.jpg');
 text('Horarios de Atención:', 'Puede disfrutar de la piscina todos los días de 09:00 a 20:00 hrs.');
 list('Reglamento de Higiene y Seguridad', [
   'Para mantener el agua en óptimas condiciones, tome una ducha antes de ingresar al agua.',
@@ -208,6 +227,7 @@ list('Reglamento de Higiene y Seguridad', [
 
 // ══ CLASES DE SKI ══
 P('clases-ski', 'Clases de Ski y Snowboard');
+hero('/images/fig-hero-clases-ski.jpg');
 intro('Estimado huésped, si está interesado en tomar clases de ski o snowboard durante su estadía, estas pueden agendarse directamente con la Escuela de Ski Nevados de Chillán de forma online o presencial en Plaza Otto.');
 text('Valores y categorías', 'El valor de las clases varía según la duración de la sesión y la cantidad de participantes.\n\nLas clases no incluyen equipo ni ticket y se dividen en categoría de niños (6-12 años) y Adultos (desde 12 años).\n\nPara su comodidad, en nuestro Guarda Ski podrá encontrar un mesón de reserva de clases desde las 9:00 hasta las 15:30 hrs.');
 text('Reservas online', 'Si realiza la reserva de forma online es importante que indique en las observaciones que el punto de encuentro e inicio de la clase sea en Hotel Termas Chillán, de lo contrario se asumirá que la clase iniciará y terminará en Plaza Otto y deberá gestionar el traslado de forma particular.');
@@ -222,6 +242,7 @@ note('Si necesita más información o asistencia para realizar su reserva, nuest
 
 // ══ GUARDERÍA ══
 P('guarderia', 'Guardería');
+hero('/images/fig-guarderia.jpg');
 text('Horarios:', 'Lunes a Sábado: 08:30 a 18:30\nDomingo: 08:30 a 16:30');
 note('Para más información, acércate al mesón de recepción');
 text('1. Edad y supervisión', 'Para niños/as de 3 a 7 años con control de esfínter. Menores de 3 años deben estar siempre con un adulto (opción de babysitter disponible).');
@@ -233,12 +254,14 @@ text('6. Convivencia', 'Caminar dentro del espacio y jugar de forma respetuosa.\
 
 // ══ SKI (menu) ══
 P('ski', 'Ski');
+hero('/images/fig-hero-ski.jpg');
 link('Centro de Ski', '/actividades?cat=Centro%20de%20Ski');
 link('Clases de Ski y Snowboard', '/info/clases-ski');
 link('Guarda Ski', '/info/guarda-ski');
 
 // ══ GUARDA SKI ══
 P('guarda-ski', 'Guarda Ski');
+hero('/images/fig-hero-guarda-ski.jpg');
 intro('Para que disfrute al máximo su experiencia en la montaña, ponemos a su disposición nuestro servicio de Guarda Ski, desde las 8:30 hasta las 18:00 hrs.');
 text('Almacenamiento', 'Disponemos de espacios designados por número de habitación para asegurar el almacenamiento seguro de su equipo de ski, snowboard y bastones.');
 note('RECOMENDACIÓN: Guarde casco, antiparras y accesorios en su habitación y evite dejarlos en el Guarda Ski.');
@@ -251,6 +274,7 @@ text('Si te encuentras fuera del Hotel, llama al:', '+562 2322 3500');
 
 // ══ POLÍTICAS DE RESERVA ══
 P('politicas-reserva', 'Políticas de Reserva');
+hero('/images/fig-hero-hotel.jpg');
 text('Reserva y Pago', 'La reserva es personal e intransferible y queda registrada a nombre del titular del voucher.\nAl reservar deberá proporcionar correo electrónico, dirección y teléfono de contacto.\nLa reserva online requiere el pago del 100% del programa. Los consumos adicionales no están incluidos.');
 text('Check-in y Garantía', 'Check-in: desde las 16:00 hrs.\nCheck-out: hasta las 12:00 hrs.\nAl ingresar, la reserva debe estar completamente pagada.\nSe solicitará una tarjeta de crédito como garantía, autorizando una retención de $400.000 por habitación, la cual será liberada al realizar el check-out, siempre que no existan consumos o cargos pendientes.\nLos consumos adicionales, daños o multas podrán cargarse a la tarjeta registrada.');
 text('Late Check-out', 'Sujeto a disponibilidad:\nHasta las 16:00 hrs.: 50% de la tarifa diaria por persona (incluye almuerzo).\nDesde las 16:00 hrs.: 100% de la tarifa diaria por persona.');
@@ -264,6 +288,7 @@ text('Traslados', 'Los traslados incluidos en algunos programas son operados por
 
 // ══ REGLAMENTO ══
 P('reglamento', 'Reglamentos & Políticas del Hotel');
+hero('/images/fig-hero-hotel.jpg');
 text('Datos de la reserva', 'Reserva nominativa y quedará registrada a nombre del suscriptor del "Voucher o Comprobante de Reserva". Al momento de efectuarla deberá informar su correo electrónico, domicilio y número de contacto.');
 text('Monto de la reserva', 'El abono por concepto de reserva online debe ser del 100% del costo total del programa, sin contabilizar los extras que se consuman durante la estadía y sin perjuicio de los programas especiales de invierno o verano. Los programas no incluyen bebestibles, coctel ni ningún alimento no señalado expresamente.');
 text('Obligaciones al ingreso', 'Al momento del Check-in debe estar pagado el 100% de la tarifa correspondiente.\nSe solicitará una Tarjeta de Crédito como garantía, siendo obligatorio para el Cliente o Huésped presentarla. Autorizará a que Hotel Termas Chillán le descuente la suma de $400.000 por cada habitación reservada, suma que será restituida al momento de hacer el Check-out.\nEn caso de incumplimiento de la obligación de egreso, autoriza irrevocablemente los cargos por consumos no incluidos, saldos, multas y cualquier suma adeudada.');

@@ -64,10 +64,11 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
   }, [page]);
 
   const pageTitle = blocks[0]?.pageTitle ?? "";
-  const heroImg = blocks.find(b => b.image)?.image ?? HERO_FALLBACK[page] ?? "/images/login-bg.jpg";
+  const heroImg = blocks.find(b => b.block === "hero")?.image ?? HERO_FALLBACK[page] ?? "/images/login-bg.jpg";
   const isEmergency = page === "emergencias";
   // Menu pages (only link blocks) render as image cards with a plain title — no hero (Figma)
-  const isMenu = blocks.length > 0 && blocks.every(b => b.block === "link");
+  const visibleBlocks = blocks.filter(b => b.block !== "hero");
+  const isMenu = visibleBlocks.length > 0 && visibleBlocks.every(b => b.block === "link");
 
   if (isMenu) {
     return (
@@ -78,7 +79,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
             {pageTitle}
           </h1>
           <div className="flex flex-col items-center gap-[46px]">
-            {blocks.map(b => (
+            {visibleBlocks.map(b => (
               <Link
                 key={b.id}
                 href={b.content ?? "#"}
@@ -103,7 +104,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
   }
 
   // Barra superior de secciones (Figma: "Barra Superior ...") — bajo el header, sobre el hero
-  const navBlocks = NAV_PAGES.has(page) ? blocks.filter(b => b.block === "text" && b.title) : [];
+  const navBlocks = NAV_PAGES.has(page) ? visibleBlocks.filter(b => b.block === "text" && b.title) : [];
   const anchorId = (b: Block) => `sec-${b.id}`;
 
   return (
@@ -153,17 +154,17 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
       {/* Blocks */}
       <div className="px-5 py-7 pb-24 md:pb-12 md:max-w-3xl md:mx-auto flex flex-col gap-5">
         {loading && <p className="text-[#9B9280] text-center py-10 text-[14px]">Cargando…</p>}
-        {!loading && blocks.length === 0 && (
+        {!loading && visibleBlocks.length === 0 && (
           <p className="text-[#9B9280] text-center py-10 text-[14px]">Sin información disponible aún.</p>
         )}
         {(() => {
           const out: React.ReactNode[] = [];
-          for (let i = 0; i < blocks.length; i++) {
-            const b = blocks[i];
+          for (let i = 0; i < visibleBlocks.length; i++) {
+            const b = visibleBlocks[i];
             if (b.block === "card") {
               // agrupa tarjetas consecutivas en un carrusel (Figma)
               const group: Block[] = [];
-              while (i < blocks.length && blocks[i].block === "card") group.push(blocks[i++]);
+              while (i < visibleBlocks.length && visibleBlocks[i].block === "card") group.push(visibleBlocks[i++]);
               i--;
               out.push(
                 <div key={`cards-${group[0].id}`} className="flex overflow-x-auto no-scrollbar gap-4 -mx-1 px-1 pb-2" style={{ scrollSnapType: "x mandatory" }}>
