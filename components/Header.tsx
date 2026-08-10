@@ -8,14 +8,16 @@ interface HeaderProps {
   transparent?: boolean;
 }
 
+// Orden y namings según Figma (feedback DSÑ 06-08)
 const NAV_ITEMS = [
-  { href: "/home",         labelKey: "nav.home",         iconClass: "fi-ts-house-blank" },
-  { href: "/habitacion",  labelKey: "nav.room",          iconClass: "fi-ts-bed-alt" },
-  { href: "/restaurantes",labelKey: "nav.restaurants",   iconClass: "fi-ts-utensils" },
-  { href: "/actividades", labelKey: "nav.activities",    iconClass: "fi-ts-mountain" },
-  { href: "/wellness",    labelKey: "nav.wellness",      iconClass: "fi-ts-hot-tub" },
-  { href: "/info/mi-estadia",   labelKey: "nav.stay",      iconClass: "fi-ts-family" },
-  { href: "/info/emergencias",  labelKey: "nav.emergency", iconClass: "fi-ts-phone-call" },
+  { href: "/home",                      labelKey: "nav.home",       iconClass: "fi-ts-house-blank" },
+  { href: "/info/mi-estadia",           labelKey: "nav.stay",       iconClass: "fi-ts-bed-alt" },
+  { href: "/restaurantes",              labelKey: "nav.restaurants",iconClass: "fi-ts-utensils" },
+  { href: "/wellness",                  labelKey: "nav.wellness",   iconClass: "fi-ts-hot-tub" },
+  { href: "/actividades",               labelKey: "nav.activities", iconClass: "fi-ts-mountain" },
+  { href: "/info/ski",                  labelKey: "nav.ski",        iconClass: "fi-ts-skiing" },
+  { href: "/info/informacion-general",  labelKey: "nav.info",       iconClass: "fi-ts-info" },
+  { href: "/info/emergencias",          labelKey: "nav.emergency",  iconClass: "fi-ts-phone-call" },
 ];
 
 const LANGS: { code: Locale; flag: string; label: string }[] = [
@@ -84,9 +86,9 @@ export default function Header({ transparent = false }: HeaderProps) {
         style={{ boxShadow: transparent ? "none" : "0 2px 8px rgba(0,0,0,0.18)" }}
       >
         {/* ── Mobile header (hidden on md+) ── */}
-        <div className="flex md:hidden items-center justify-between px-4 py-3 max-w-[480px] mx-auto w-full">
+        <div className="flex md:hidden items-center justify-between px-4 max-w-[480px] mx-auto w-full" style={{ height: 85 }}>
           <Link href="/home">
-            <Image src="/images/logo-hotel-termas.svg" alt="Hotel Termas de Chillán" width={160} height={40} className="h-10 w-auto object-contain" />
+            <Image src="/images/logo-hotel-termas.svg" alt="Hotel Termas de Chillán" width={160} height={40} className="h-12 w-auto object-contain" />
           </Link>
           <div className="flex items-center gap-3">
             <LangSelector />
@@ -126,7 +128,7 @@ export default function Header({ transparent = false }: HeaderProps) {
       {menuOpen && (
         <div className="fixed inset-0 z-[100] md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-[#1B4332] flex flex-col rounded-b-3xl overflow-hidden shadow-2xl">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-[#215732] flex flex-col rounded-b-3xl overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/15">
               <Image src="/images/logo-hotel-termas.svg" alt="Hotel Termas de Chillán" width={160} height={40} className="h-10 w-auto object-contain" />
               <button onClick={() => setMenuOpen(false)} className="text-white p-1">

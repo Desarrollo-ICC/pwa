@@ -20,7 +20,7 @@ const note = (c: string) => B('note', null, c);
 const link = (label: string, href: string, img?: string) => {
   rows.push({ page, pageTitle, block: 'link', title: label, content: href, image: img ?? null, active: true, order: ++ord });
 };
-const list = (t: string, items: string[]) => B('list', t, items.join('\n'));
+const list = (t: string | null, items: string[]) => B('list', t, items.join('\n'));
 const price = (t: string, pairs: [string, string][]) => B('price', t, pairs.map(([n, p]) => `${n} — ${p}`).join('\n'));
 // card: título + descripción + "@ubicación" (Figma: carrusel con imagen)
 const card = (t: string, desc: string, place: string, img?: string) => {
@@ -29,7 +29,6 @@ const card = (t: string, desc: string, place: string, img?: string) => {
 
 // ══ MI ESTADÍA (menu) ══
 P('mi-estadia', 'Mi Estadía');
-hero('/images/fig-servicios-incluidos.jpg');
 link('Servicios Incluídos', '/info/servicios-incluidos', '/images/fig-servicios-incluidos.jpg');
 link('Check-In y Check-Out', '/info/check-in', '/images/fig-check-in.jpg');
 link('Guardería', '/info/guarderia', '/images/fig-guarderia.jpg');
@@ -46,7 +45,7 @@ text('Traslados', 'El hotel no cuenta con servicio de traslado propio.\n\nEn cas
 P('check-in', 'Check-In y Check-Out');
 hero('/images/fig-check-in.jpg');
 text('Horarios:', 'Check-in: desde las 16:00 hrs.\nCheck-out: hasta las 12:00 hrs.');
-text('Late Check-Out:', 'Sujeto a Disponibilidad*\nHasta las 16:00 hrs.: 50% de la tarifa diaria por persona (incluye almuerzo).\nDesde las 16:00 hrs.: 100% de la tarifa diaria por persona.');
+text('Late Check-Out:', 'Sujeto a Disponibilidad*\n- **Hasta las 16:00 hrs.:** 50% de la tarifa diaria por persona (incluye almuerzo).\n- **Desde las 16:00 hrs.:** 100% de la tarifa diaria por persona.');
 link('Programa del Viajero', '/info/programa-viajero');
 link('Plan de Invierno', '/info/plan-invierno');
 link('Preparativos para el Ascenso', '/info/preparativos');
@@ -56,12 +55,10 @@ link('Estacionamientos', '/info/estacionamientos');
 P('programa-viajero', 'Programa del Viajero');
 hero('/images/fig-check-in.jpg');
 text('¿Qué Debo Empacar?', 'El clima de montaña es tan dinámico como el paisaje. Para que aproveches cada momento, te compartimos algunas recomendaciones.');
-text('Temperaturas Según la Época del Año', 'Verano (diciembre – febrero) Temperaturas entre 18 °C y 30 °C, cielos despejados y baja probabilidad de lluvias. La época ideal para senderismo, cicloturismo y paseos por el valle.\n\nPrimavera y Otoño (marzo – abril / octubre – noviembre) Temperaturas entre 12 °C y 20 °C con lluvias moderadas. El bosque se transforma ofreciendo colores y sensaciones únicas.\n\nInvierno (junio – agosto) Temperaturas entre 0 °C y 15 °C con frecuentes nevadas. La temporada perfecta para esquí y actividades en la nieve.');
-text('Ropa Recomendada', 'Para disfrutar del hotel y de las actividades al aire libre te recomendamos traer ropa que pueda usarse en capas y así, adaptarte fácilmente a los cambios de temperatura.\nPrimera Capa: Ropa interior térmica de secado rápido.\nSegunda Capa: Ropa para mantenerse abrigado.\nTercera Capa: Chaqueta y pantalón cortaviento e impermeable.\n\nTambién incluye en tu maleta:\nTraje de Baño\nSandalias\nZapatos de trekking cómodos (evitar zapatillas de running).\n\nAccesorios:\nGorro para el sol y gorro de abrigo\nGuantes impermeables y cortaviento\nCuello tipo buff o bandana\nAnteojos con filtro UV\nBloqueador solar y protector labial\nRepelente de insectos\nBotella de agua recargable\nMochila pequeña');
+text('Temperaturas Según la Época del Año', '- **Verano (diciembre – febrero)** Temperaturas entre 18 °C y 30 °C, cielos despejados y baja probabilidad de lluvias. La época ideal para senderismo, cicloturismo y paseos por el valle.\n- **Primavera y Otoño (marzo – abril / octubre – noviembre)** Temperaturas entre 12 °C y 20 °C con lluvias moderadas. El bosque se transforma ofreciendo colores y sensaciones únicas.\n- **Invierno (junio – agosto)** Temperaturas entre 0 °C y 15 °C con frecuentes nevadas. La temporada perfecta para esquí y actividades en la nieve.');
+text('Ropa Recomendada', 'Para disfrutar del hotel y de las actividades al aire libre te recomendamos traer ropa que pueda usarse en capas y así, adaptarte fácilmente a los cambios de temperatura.\n- **Primera Capa:** Ropa interior térmica de secado rápido.\n- **Segunda Capa:** Ropa para mantenerse abrigado.\n- **Tercera Capa:** Chaqueta y pantalón cortaviento e impermeable.\n\nTambién incluye en tu maleta:\n- Traje de Baño\n- Sandalias\n- Zapatos de trekking cómodos (evitar zapatillas de running).\n\nAccesorios:\n- Gorro para el sol y gorro de abrigo\n- Guantes impermeables y cortaviento\n- Cuello tipo buff o bandana\n- Anteojos con filtro UV\n- Bloqueador solar y protector labial\n- Repelente de insectos\n- Botella de agua recargable\n- Mochila pequeña');
 text('Medicamentos', 'Si utilizas alguna medicación, recuerda traerla. No hay farmacias en los alrededores del hotel.');
-text('¿Cómo Llegar? — En avión desde Santiago', 'Avión a Concepción, 50 minutos.\nTransfer Concepción al Hotel, 2 horas y 30 minutos.');
-text('En Auto desde Santiago', 'Auto vía Ruta 5 Sur hasta Chillán, 4 horas (400 km).\nVía ruta N° 55 en km 80, 1 hora 15 minutos.');
-text('En Tren desde Santiago', 'De Estación Central a Estación Chillán, 5 horas.\nTransfer al Hotel, 1 hora.');
+text('¿Cómo Llegar?', '**En avión desde Santiago**\n1. Avión a Concepción, 50 minutos.\n2. Transfer Concepción al Hotel, 2 horas y 30 minutos.\n\n**En Auto desde Santiago**\n1. Auto vía Ruta 5 Sur hasta Chillán, 4 horas (400 km).\n2. Vía ruta N° 55 en km 80, 1 hora 15 minutos.\n\n**En Tren desde Santiago**\n1. De Estación Central a Estación Chillán, 5 horas.\n2. Transfer al Hotel, 1 hora.');
 
 // ══ PLAN DE INVIERNO ══
 P('plan-invierno', 'Plan de Invierno');
@@ -93,7 +90,6 @@ text('Uso de Llaves y Cerraduras', 'Contenido pendiente de definir.');
 
 // ══ INFORMACIÓN GENERAL (menu) ══
 P('informacion-general', 'Información General');
-hero('/images/fig-hero-hotel.jpg');
 link('Reglamento & Políticas del Hotel', '/info/reglamento');
 link('Tiendas', '/info/tiendas');
 link('Espacios', '/info/espacios');
@@ -208,7 +204,8 @@ card('Actividades Guiadas', 'Combinan movimiento, respiración y conexión con e
 P('piscinas', 'Piscinas');
 hero('/images/fig-hero-piscinas.jpg');
 text('Horarios de Atención:', 'Puede disfrutar de la piscina todos los días de 09:00 a 20:00 hrs.');
-list('Reglamento de Higiene y Seguridad', [
+text('Reglamento de Higiene y Seguridad', 'Para que su experiencia de descanso sea placentera y segura, siga las siguientes reglas:');
+list(null, [
   'Para mantener el agua en óptimas condiciones, tome una ducha antes de ingresar al agua.',
   'Deposite los desechos en los contenedores correspondientes.',
   'La piscina no cuenta con servicio de salvavidas permanente.',
@@ -216,13 +213,13 @@ list('Reglamento de Higiene y Seguridad', [
   'El uso de gorro de baño es obligatorio para todos.',
   'Si tiene alguna herida, vendaje o apósito, por favor evite entrar al agua.',
   'Se requiere traje de baño adecuado. No se permite el uso de ropa de calle o calzado en el área inmediata de nado.',
-  'El uso de pañales especiales para piscina es obligatorio para bebés y niños pequeños. Por favor, revise el estado de los pañales al menos cada 30 minutos.',
+  'El uso de pañales especiales para piscina es obligatorio para bebés y niños pequeños. Por favor, diríjase al baño y revise el estado de los pañales al menos cada 30 minutos.',
   'Los niños deben estar acompañados por un adulto responsable en todo momento.',
   'Está prohibido correr, realizar clavados o saltos acrobáticos.',
-  'Nuestra piscina es un espacio de descanso. Evite gritos, altavoces externos o juegos bruscos.',
-  'No se permite fumar ni consumir alimentos o bebidas (incluyendo alcohol) en ningún lugar del recinto.',
+  'Nuestra piscina es un espacio de descanso. Evite gritos, altavoces externos o juegos bruscos que puedan incomodar a otros huéspedes.',
+  'No se permite fumar ni consumir alimentos o bebidas (incluyendo alcohol) en ningún lugar del recinto. El consumo de drogas está terminantemente prohibido.',
   'No se permiten botellas, vasos o cualquier objeto de vidrio en el área de la piscina.',
-  'Se prohíbe reservar reposeras con toallas u objetos personales. Si una reposera permanece desocupada por más de 1 hora, el personal puede retirar los objetos.',
+  'Se prohíbe reservar reposeras con toallas u objetos personales. Si una reposera permanece desocupada por más de 1 hora, el personal tiene autorización para retirar los objetos personales.',
 ]);
 
 // ══ CLASES DE SKI ══
@@ -252,12 +249,12 @@ text('4. Autonomía', 'Niños/as deben ser autónomos en el uso del baño (educa
 text('5. Uso de espacios y materiales', 'Juguetes permanecen en la guardería (solo se llevan manualidades).\nEspacios y mobiliario son de uso preferente de los niños/as.\nAdultos pueden acompañar en zonas habilitadas.');
 text('6. Convivencia', 'Caminar dentro del espacio y jugar de forma respetuosa.\nCuidar y ordenar materiales.\nRespetar a otros niños/as, especialmente a los más pequeños.\nUsar juegos y estructuras de forma segura.');
 
-// ══ SKI (menu) ══
+// ══ SKI (menu — orden Figma: Rental, Guarda, Clases, Centro) ══
 P('ski', 'Ski');
-hero('/images/fig-hero-ski.jpg');
-link('Centro de Ski', '/actividades?cat=Centro%20de%20Ski');
-link('Clases de Ski y Snowboard', '/info/clases-ski');
-link('Guarda Ski', '/info/guarda-ski');
+link('Ski Rental', '/ski-rental', '/images/fig-hero-ski-rental.jpg');
+link('Guarda Ski', '/info/guarda-ski', '/images/fig-hero-guarda-ski.jpg');
+link('Clases de Ski y Snowboard', '/info/clases-ski', '/images/fig-hero-clases-ski.jpg');
+link('Centro de Ski', '/actividades?cat=Centro%20de%20Ski', '/images/fig-hero-ski.jpg');
 
 // ══ GUARDA SKI ══
 P('guarda-ski', 'Guarda Ski');
@@ -327,16 +324,23 @@ list('Cuidado del Entorno — puntos', [
 B('note', 'Nota full day', 'Las actividades full day son operadas por proveedor externo y tienen costo adicional.');
 text('Actividades Gratuitas', 'Acceso a espacios deportivos y recreativos en las dependencias del hotel.');
 text('Actividades con Costo Extra', 'Experiencias para explorar el entorno.');
+text('Intro — Caminatas y Trekking', 'Exploración del entorno natural. Snacks incluidos y cocktail en salidas de puesta de sol.');
+text('Intro — Bicicleta', 'Recorridos de diversos niveles por los alrededores del hotel y el Valle de las Trancas.');
+text('Intro — Contemplación y Recreación', 'Actividades de aprendizaje, respeto por la naturaleza y aventura.');
+text('Intro — Bienestar y Talleres Indoor', 'Actividades de activación corporal, arte y gastronomía.');
+text('Intro — Niños', 'Actividades de activación corporal, arte y gastronomía.');
+text('Intro — Deportes de Nieve', 'Vive la montaña al máximo: adrenalina en la nieve, aventuras en la naturaleza y momentos de bienestar y relax.');
+text('Intro — Exploración & Naturaleza', 'Vive la montaña al máximo: adrenalina en la nieve, aventuras en la naturaleza y momentos de bienestar y relax.');
 B('note', 'Nota mesón', 'Conoce las actividades disponibles consultando en el mesón de experiencias.');
 
 // Accesos rápidos del Home
 P('ui-home', 'Home (accesos rápidos y emergencia)');
-B('link', 'Comer y Beber', '/restaurantes');
 B('link', 'Mi Estadía', '/info/mi-estadia');
+B('link', 'Comer y Beber', '/restaurantes');
 B('link', 'Bienestar', '/wellness');
 B('link', 'Experiencias y Actividades', '/actividades');
-B('link', 'Información General', '/info/informacion-general');
 B('link', 'Ski', '/info/ski');
+B('link', 'Información General', '/info/informacion-general');
 text('Emergencia — intro', 'Si necesitas atención médica inmediata, comunícate con la recepción llamando desde tu habitación al:');
 text('Emergencia — teléfono interno', '3500');
 text('Emergencia — intro externa', 'Si te encuentras fuera del Hotel, llama al:');

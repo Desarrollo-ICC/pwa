@@ -14,12 +14,12 @@ interface Event { id: number; day: string; month: string; time: string; title: s
 
 // Accesos rápidos — orden y etiquetas del Figma (PWA- Home)
 const DEFAULT_QUICK_LINKS = [
-  { href: "/restaurantes",             label: "Comer y Beber",              iconClass: "fi-ts-utensils" },
   { href: "/info/mi-estadia",          label: "Mi Estadía",                 iconClass: "fi-ts-bed-alt" },
+  { href: "/restaurantes",             label: "Comer y Beber",              iconClass: "fi-ts-utensils" },
   { href: "/wellness",                 label: "Bienestar",                  iconClass: "fi-ts-hot-tub" },
   { href: "/actividades",              label: "Experiencias y Actividades", iconClass: "fi-ts-mountain" },
-  { href: "/info/informacion-general", label: "Información General",        iconClass: "fi-ts-info" },
   { href: "/info/ski",                 label: "Ski",                        iconClass: "fi-ts-skiing" },
+  { href: "/info/informacion-general", label: "Información General",        iconClass: "fi-ts-info" },
 ];
 
 function weatherIcon(code: number): string {
@@ -219,7 +219,7 @@ export default function HomePage() {
         <img src="/images/home-hero.jpg" alt="Hotel Termas" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center pt-14">
-          <h1 className="font-playfair text-white text-[32px] md:text-[48px] font-bold drop-shadow-lg leading-tight text-center">
+          <h1 className="font-playfair text-white text-[32px] md:text-[36px] font-bold drop-shadow-lg leading-tight text-center">
             {getWelcome(guestName)},<br />{guestName}
           </h1>
         </div>
@@ -268,6 +268,7 @@ export default function HomePage() {
           </div>
         </div>
 
+        <div className="border-t border-[#E8DDD0] my-6 mx-4 md:max-w-5xl md:mx-auto" />
         {/* Clima + Alertas side by side on desktop */}
         <div className="mt-5 px-4 md:max-w-5xl md:mx-auto md:flex md:gap-4 md:items-stretch">
           {/* Alertas desktop — izquierda */}
@@ -318,6 +319,7 @@ export default function HomePage() {
           )}
         </div>
 
+        <div className="border-t border-[#E8DDD0] my-6 mx-4 md:max-w-5xl md:mx-auto" />
         {/* Próximos eventos + Emergencia */}
         <div className="mt-7 md:max-w-5xl md:mx-auto px-4">
           {/* Próximos eventos */}
@@ -358,14 +360,14 @@ export default function HomePage() {
               <p className="text-[#4A4A4A] text-[13px] leading-relaxed mb-4">
                 {ui["Emergencia — intro"] ?? "Si necesitas atención médica inmediata, comunícate con la recepción llamando al:"}
               </p>
-              <a href="tel:3500" className="inline-flex items-center gap-2 bg-[#B85C45] text-white font-semibold text-[16px] px-8 py-2.5 rounded-full mb-5 active:opacity-80">
+              <a href="tel:3500" className="inline-flex items-center gap-2 bg-[#DB7C59] text-[#F3ECE4] font-semibold text-[16px] px-8 py-2.5 rounded-full mb-5 active:opacity-80">
                 <i className="fi-rs-phone-call" style={{ fontSize: 16 }} />
                 {ui["Emergencia — teléfono interno"] ?? "3500"}
               </a>
               <p className="text-[#4A4A4A] text-[13px] leading-relaxed mb-4">
                 Si te encuentras fuera del Hotel, llama al:
               </p>
-              <a href="tel:+56223223500" className="inline-flex items-center gap-2 bg-[#B85C45] text-white font-semibold text-[16px] px-8 py-2.5 rounded-full active:opacity-80">
+              <a href="tel:+56223223500" className="inline-flex items-center gap-2 bg-[#DB7C59] text-[#F3ECE4] font-semibold text-[16px] px-8 py-2.5 rounded-full active:opacity-80">
                 <i className="fi-rs-phone-call" style={{ fontSize: 16 }} />
                 {ui["Emergencia — teléfono externo"] ?? "+562 2322 3500"}
               </a>

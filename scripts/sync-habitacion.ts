@@ -53,11 +53,11 @@ row('almohadas', 'Nota', 'Todas las almohadas cuentan con tratamiento antialérg
 row('climatizacion', 'Climatización', 'Controle la temperatura desde la pantalla táctil ubicada en su habitación.');
 row('climatizacion', 'Encender', 'Presione On / Off.');
 row('climatizacion', 'Temperatura', 'Ajuste con los botones ▲ / ▼.\nRango: 16°C a 30°C.\nTemperatura recomendada: 22°C a 24°C.');
-row('climatizacion', 'Ventilador', 'Seleccione entre:\nBaja\nMedia\nAlta');
-row('climatizacion', 'Recomendaciones', 'Mantenga puertas y ventanas cerradas.\nEvite temperaturas extremas para un mejor rendimiento.');
+row('climatizacion', 'Ventilador', 'Seleccione entre:\n- Baja\n- Media\n- Alta');
+row('climatizacion', 'Recomendaciones', '- Mantenga puertas y ventanas cerradas.\n- Evite temperaturas extremas para un mejor rendimiento.');
 
 // ── Redes y Contraseñas ──────────────────────────────────────────────────────
-row('redes', 'Redes y Contraseñas', 'En habitaciones y áreas comunes\n\nRed: Huéspedes Termas Chillán\nContraseña: hotel.2019');
+row('redes', 'Redes y Contraseñas', 'En habitaciones y áreas comunes\n\n**Red:** Huéspedes Termas Chillán\n**Contraseña:** hotel.2019');
 
 // ── TV ───────────────────────────────────────────────────────────────────────
 row('tv', 'Paso 1', 'Con el Televisor encendido, pulse botón de inicio para acceder al menú principal.');
@@ -66,9 +66,9 @@ row('tv', 'Paso 3', 'En Mundo Go podrás ver el catálogo en el menú “VER TOD
 
 // ── Guarda Maletas ───────────────────────────────────────────────────────────
 row('guarda_maletas', 'Guarda Maletas', 'Disponemos de servicio de guarda maletas.');
-row('guarda_maletas', '¿Cómo solicitarlo?', 'Llame a Recepción (marcando 0).\nNuestro personal registrará su equipaje y le entregará un comprobante.');
-row('guarda_maletas', 'Retiro', 'Presente el comprobante al retirar sus maletas.\nSi lo extravía, se solicitará una identificación.');
-row('guarda_maletas', 'Importante', 'Las maletas deben estar cerradas, idealmente vacías.\nNo deje dinero, documentos, joyas ni objetos de valor en su interior.');
+row('guarda_maletas', '¿Cómo solicitarlo?', '- Llame a **Recepción (marcando 0)**.\n- Nuestro personal registrará su equipaje y le entregará un comprobante.');
+row('guarda_maletas', 'Retiro', '- Presente el comprobante al retirar sus maletas.\n- Si lo extravía, se solicitará una identificación.');
+row('guarda_maletas', 'Importante', '- Las maletas deben estar cerradas, idealmente vacías.\n- No deje dinero, documentos, joyas ni objetos de valor en su interior.');
 
 // ── Punto de Hidratación ─────────────────────────────────────────────────────
 row('hidratacion', 'Punto de Hidratación', 'A la salida de los ascensores, en el piso 1, encontrarás agua mineral con y sin gas.');

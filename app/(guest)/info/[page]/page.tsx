@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import { ChevronRight } from "lucide-react";
+import RichText from "@/components/RichText";
 
 interface Block {
   id: number; page: string; pageTitle: string; block: string;
@@ -55,6 +56,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
   const router = useRouter();
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeSec, setActiveSec] = useState<number | null>(null);
 
   useEffect(() => {
     fetch(`/api/info-pages?page=${encodeURIComponent(page)}`)
@@ -69,6 +71,42 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
   // Menu pages (only link blocks) render as image cards with a plain title — no hero (Figma)
   const visibleBlocks = blocks.filter(b => b.block !== "hero");
   const isMenu = visibleBlocks.length > 0 && visibleBlocks.every(b => b.block === "link");
+
+  const hasHero = blocks.some(b => b.block === "hero");
+
+  // Menú con hero (Figma: Tiendas) → hero + filas simples con chevron
+  if (isMenu && hasHero) {
+    return (
+      <div className="min-h-svh bg-[#FFFBF3]">
+        <Header />
+        <div className="relative overflow-hidden shadow-lg" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+          <img src={heroImg} alt={pageTitle} className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 flex items-center justify-center px-6">
+            <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05 }}>{pageTitle}</h1>
+          </div>
+          <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+            <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80">
+              <i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver
+            </button>
+          </div>
+        </div>
+        <div className="px-5 py-7 pb-24 md:pb-12 md:max-w-2xl md:mx-auto flex flex-col gap-3">
+          {visibleBlocks.map(b => (
+            <Link
+              key={b.id}
+              href={b.content ?? "#"}
+              className="flex justify-between items-center px-4 py-4 rounded-2xl bg-[#F3ECE4] border border-[#EDE6D8] shadow-sm active:opacity-80"
+            >
+              <span style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }}>{b.title}</span>
+              <ChevronRight size={18} className="text-[#9B9280] shrink-0" />
+            </Link>
+          ))}
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   if (isMenu) {
     return (
@@ -95,7 +133,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
                 </div>
               </Link>
             ))}
-            <button onClick={() => router.back()} className="bg-[#1B4332] text-white px-6 py-2 rounded-full text-[14px] font-semibold active:opacity-80 mb-10">Volver</button>
+            <button onClick={() => router.back()} className="bg-[#1B4332] text-white px-6 py-1 rounded-full text-[15px] font-medium active:opacity-80 mb-10"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
           </div>
         </div>
         <BottomNav />
@@ -112,13 +150,13 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
       <Header />
 
       {navBlocks.length > 1 && (
-        <div className="bg-[#1B4332] sticky top-0 z-20" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-2 md:justify-center">
+        <div className="bg-[#1B4332] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
             {navBlocks.map(b => (
               <button
                 key={b.id}
-                onClick={() => document.getElementById(anchorId(b))?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap text-white/85 hover:text-white transition-all"
+                onClick={() => { setActiveSec(b.id); document.getElementById(anchorId(b))?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all ${activeSec === b.id ? "bg-[#215732] text-[#FFFBF3]" : "text-white/85 hover:text-white"}`}
               >
                 {b.title}
               </button>
@@ -145,8 +183,8 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
           </h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className={`text-[14px] font-semibold px-6 py-2 rounded-full active:opacity-80 ${isEmergency ? "bg-white text-[#DB7C59]" : "bg-[#1B4332] text-white"}`}>
-            Volver
+          <button onClick={() => router.back()} className={`text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80 ${isEmergency ? "bg-white text-[#DB7C59]" : "bg-[#1B4332] text-white"}`}>
+            <i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver
           </button>
         </div>
       </div>
@@ -190,7 +228,12 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
               );
               continue;
             }
-            out.push(<div key={b.id} id={`sec-${b.id}`} style={{ scrollMarginTop: 56 }}><BlockView b={b} emergency={isEmergency} /></div>);
+            const needsRule = NAV_PAGES.has(page) && b.block === "text" && b.title && out.length > 0;
+            out.push(
+              <div key={b.id} id={`sec-${b.id}`} style={needsRule ? { scrollMarginTop: 150, borderTop: "1px solid #E8DDD0", paddingTop: 20 } : { scrollMarginTop: 150 }}>
+                <BlockView b={b} emergency={isEmergency} />
+              </div>
+            );
           }
           return out;
         })()}
@@ -220,7 +263,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
   // Lead paragraph
   if (b.block === "intro") {
     return (
-      <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
+      <p className="text-[#3D2B1F] text-[15px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
         {b.content}
       </p>
     );
@@ -229,7 +272,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
   // Small print
   if (b.block === "note") {
     return (
-      <p className="text-[#9B9280] text-[12px] leading-relaxed whitespace-pre-line italic">{b.content}</p>
+      <p className="text-[#9B9280] text-[13px] leading-relaxed whitespace-pre-line italic">{b.content}</p>
     );
   }
 
@@ -258,13 +301,24 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
     return (
       <div>
         {b.title && <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-2">{b.title}</h3>}
-        <ul className="flex flex-col gap-2">
-          {lines.map((l, i) => (
-            <li key={i} className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]/40 shrink-0 mt-2" />
-              <span className="text-[#3D2B1F] text-[14px] leading-relaxed" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{l}</span>
-            </li>
-          ))}
+        <ul className="flex flex-col gap-2.5">
+          {lines.map((l, i) => {
+            const step = l.match(/^(.+?·.+?)\s+—\s+(.+)$/);
+            if (step) {
+              return (
+                <li key={i} className={i > 0 ? "pt-2.5" : ""} style={i > 0 ? { borderTop: "1px solid #EDE6D8" } : undefined}>
+                  <p className="font-bold text-[#3D2B1F] text-[14px]" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{step[1].replace(" · ", " | ")}</p>
+                  <p className="text-[#6B6B6B] text-[13px] leading-relaxed" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{step[2]}</p>
+                </li>
+              );
+            }
+            return (
+              <li key={i} className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]/40 shrink-0 mt-2" />
+                <span className="text-[#3D2B1F] text-[14px] leading-relaxed" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{l}</span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     );
@@ -287,7 +341,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
   return (
     <div>
       {b.title && <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, lineHeight: 1.15, color: "#54432B" }} className="mb-1.5">{b.title}</h3>}
-      <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{b.content}</p>
+      <RichText text={b.content ?? ""} />
     </div>
   );
 }

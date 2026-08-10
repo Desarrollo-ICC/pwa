@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import RichText from "@/components/RichText";
 
 interface InfoItem { id: number; section: string; title: string; content: string; }
 
@@ -65,13 +66,13 @@ export default function HabitacionPage() {
       <Header />
 
       {/* Nav bar — below header, above hero (Figma: Barra Superior Habitación) */}
-      <div className="bg-[#1B4332] sticky top-0 z-20" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
-        <div className="flex gap-1 overflow-x-auto no-scrollbar px-3 py-2 md:justify-center">
+      <div className="bg-[#1B4332] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+        <div className="flex gap-1 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {visible.map(t => (
             <button
               key={t.key}
               onClick={() => scrollTo(t.key)}
-              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#2D6A4F] text-white" : "text-white/85 hover:text-white"}`}
+              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#215732] text-[#FFFBF3]" : "text-white/85 hover:text-white"}`}
             >
               {t.label}
             </button>
@@ -87,7 +88,7 @@ export default function HabitacionPage() {
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>Habitación</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[14px] font-semibold px-6 py-2 rounded-full active:opacity-80 flex items-center gap-1.5">
+          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80 flex items-center gap-1.5">
             <span style={{ fontSize: 11 }}>‹</span> Volver
           </button>
         </div>
@@ -100,7 +101,7 @@ export default function HabitacionPage() {
             key={sec.key}
             ref={el => { sectionRefs.current[sec.key] = el; }}
             className={idx > 0 ? "pt-7 mt-7" : ""}
-            style={idx > 0 ? { borderTop: "1px solid #E8DDD0", scrollMarginTop: 56 } : { scrollMarginTop: 56 }}
+            style={idx > 0 ? { borderTop: "1px solid #E8DDD0", scrollMarginTop: 150 } : { scrollMarginTop: 150 }}
           >
             <SectionBody
               secKey={sec.key}
@@ -135,7 +136,7 @@ function SectionBody({ secKey, label, rows, openLav, setOpenLav }: {
             {rows.map(item => (
               <div key={item.id}>
                 <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">{item.title}</h3>
-                <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{item.content}</p>
+                <RichText text={item.content} />
               </div>
             ))}
           </div>
@@ -194,9 +195,7 @@ function SectionBody({ secKey, label, rows, openLav, setOpenLav }: {
     <>
       <SectionTitle>{label}</SectionTitle>
       {intro && (
-        <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line mb-4" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
-          {intro.content}
-        </p>
+        <RichText text={intro.content} className="text-[#3D2B1F] text-[14px] leading-relaxed mb-4" />
       )}
       <div className="flex flex-col gap-4">
         {rest.map(item => (
@@ -204,9 +203,7 @@ function SectionBody({ secKey, label, rows, openLav, setOpenLav }: {
             <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">
               {item.title}
             </h3>
-            <p className="text-[#3D2B1F] text-[14px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
-              {item.content}
-            </p>
+            <RichText text={item.content} />
           </div>
         ))}
       </div>

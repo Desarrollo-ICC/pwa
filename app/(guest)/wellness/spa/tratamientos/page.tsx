@@ -46,13 +46,13 @@ export default function SpaTratamientosPage() {
       <Header />
 
       {/* Barra Superior Wellness — bajo el header, sobre el hero (Figma) */}
-      <div className="bg-[#1B4332]" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-2 md:justify-center">
+      <div className="bg-[#1B4332] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+        <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all whitespace-nowrap ${activeCategory === cat ? "bg-white text-[#1B4332]" : "text-white/80 hover:text-white"}`}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all whitespace-nowrap ${activeCategory === cat ? "bg-[#215732] text-[#FFFBF3]" : "text-white/80 hover:text-white"}`}
             >
               {cat}
             </button>
@@ -71,7 +71,7 @@ export default function SpaTratamientosPage() {
           <h1 className="font-playfair text-white font-bold text-center drop-shadow-lg" style={{ fontSize: 40, lineHeight: 1 }}>Menú de Tratamientos</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[14px] font-semibold px-6 py-2 rounded-full active:opacity-80">Volver</button>
+          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
         </div>
       </div>
 

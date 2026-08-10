@@ -6,8 +6,10 @@
     "activities": "Experiências",
     "wellness": "Bem-estar",
     "family": "Família e Crianças",
-    "emergency": "Contato de Emergência",
-    "stay": "Minha Estadia"
+    "emergency": "Emergências",
+    "stay": "Minha Estadia",
+    "ski": "Ski",
+    "info": "Informações Gerais"
   },
   "common": {
     "back": "Voltar",

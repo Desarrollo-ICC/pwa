@@ -70,7 +70,7 @@ export default function WellnessPage() {
                 </div>
               </Link>
             ))}
-            <button onClick={() => window.history.back()} className="bg-[#1B4332] text-white px-6 py-2 rounded-full text-[14px] font-semibold active:opacity-80">Volver</button>
+            <button onClick={() => window.history.back()} className="bg-[#1B4332] text-white px-6 py-1 rounded-full text-[15px] font-medium active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
           </div>
         </div>
       </div>

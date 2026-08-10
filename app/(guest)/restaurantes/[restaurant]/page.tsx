@@ -40,7 +40,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>{cfg.label}</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[14px] font-semibold px-6 py-2 rounded-full active:opacity-80">Volver</button>
+          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
         </div>
       </div>
 
@@ -98,14 +98,14 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
               ).map(([sub, subItems]) => (
                 <div key={sub}>
                   <h3 className="font-playfair font-bold text-[#54432B] text-[24px] leading-none text-center mb-3">{sub}</h3>
-                  <div className="flex flex-col gap-2">
+                  <div className="bg-[#F3EDE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-2 flex flex-col divide-y divide-[#E8DDD0]">
                     {subItems.map(item => (
-                      <div key={item.id} className="bg-[#F3EDE4] rounded-2xl px-4 py-3 border border-[#EDE6D8] shadow-sm flex justify-between items-start gap-3">
+                      <div key={item.id} className="flex justify-between items-start gap-3 py-2.5">
                         <div className="flex-1">
-                          <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#54432B" }}>{item.name}</p>
+                          <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 14, color: "#54432B" }}>{item.name}</p>
                           {item.description && <p className="text-[#9B9280] text-[12px] mt-0.5">{item.description}</p>}
                         </div>
-                        {item.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 15, lineHeight: 1.4, color: "#DBA33B" }}>{item.price}</span>}
+                        {item.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 14, lineHeight: 1.5, color: "#DBA33B" }}>{item.price}</span>}
                       </div>
                     ))}
                   </div>

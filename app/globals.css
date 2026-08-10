@@ -83,7 +83,7 @@ span[class^="fi-bs-"]::before, span[class*=" fi-bs-"]::before {
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none; /* none: un transform retenido rompe position:fixed de los hijos */
   }
 }
 

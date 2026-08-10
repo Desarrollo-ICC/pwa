@@ -29,6 +29,17 @@ const CATEGORY_ORDER_INVIERNO = [
   "Niños",
 ];
 
+// Intros de cada categoría (Figma) — editables en admin: Páginas de Información → ui-actividades
+const CAT_INTROS: Record<string, string> = {
+  "Caminatas y Trekking":       "Exploración del entorno natural. Snacks incluidos y cocktail en salidas de puesta de sol.",
+  "Bicicleta":                  "Recorridos de diversos niveles por los alrededores del hotel y el Valle de las Trancas.",
+  "Contemplación y Recreación": "Actividades de aprendizaje, respeto por la naturaleza y aventura.",
+  "Bienestar y Talleres Indoor":"Actividades de activación corporal, arte y gastronomía.",
+  "Niños":                      "Actividades de activación corporal, arte y gastronomía.",
+  "Deportes de Nieve":          "Vive la montaña al máximo: adrenalina en la nieve, aventuras en la naturaleza y momentos de bienestar y relax.",
+  "Exploración & Naturaleza":   "Vive la montaña al máximo: adrenalina en la nieve, aventuras en la naturaleza y momentos de bienestar y relax.",
+};
+
 const CAT_FALLBACKS: Record<string, string> = {
   "Caminatas y Trekking":       "/images/actividades.jpg",
   "Bicicleta":                  "/images/actividades.jpg",
@@ -96,14 +107,14 @@ function ActivityCard({ activity, catImage }: { activity: Activity; catImage: st
             {bullets.map((b, i) => (
               <li key={i} className="flex items-center gap-2.5">
                 <span className="w-6 h-6 rounded-full bg-[#1B4332]/10 flex items-center justify-center shrink-0">
-                  <i className={`${bulletIcon(b)} text-[#D4722A]`} style={{ fontSize: 11 }} />
+                  <i className={`${bulletIcon(b)} text-[#DBA33B]`} style={{ fontSize: 11 }} />
                 </span>
                 <span className="text-[#3D3D3D] text-[13px] leading-snug">{b}</span>
               </li>
             ))}
           </ul>
         )}
-        <div className="mt-3 flex items-center gap-2 text-[#9B9280] text-[11px]">
+        <div className="mt-3 pt-2.5 flex items-center gap-2 text-[#9B9280] text-[11px]" style={{ borderTop: "1px solid #E8DDD0" }}>
           <i className="fi-ts-info" style={{ fontSize: 12 }} />
           <span>Para más información, acércate al mesón de recepción</span>
         </div>
@@ -150,7 +161,6 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
 
   const rows = [
     { key: "reporte", label: "Reporte de Andariveles y Pistas", href: "https://termaschillan.cl/informacion-centro-de-ski/" },
-    { key: "precios", label: "Precios de Renta y Taller Ski" },
   ];
 
   return (
@@ -447,7 +457,7 @@ export default function ActividadesPage() {
                     ))}
                   </ul>
                 </div>
-                <button onClick={() => window.history.back()} className="bg-[#1B4332] text-white px-6 py-2 rounded-full text-[14px] font-semibold active:opacity-80 mb-20">Volver</button>
+                <button onClick={() => window.history.back()} className="bg-[#1B4332] text-white px-6 py-1 rounded-full text-[15px] font-medium active:opacity-80 mb-20"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
               </div>
             )}
           </div>
@@ -472,15 +482,18 @@ export default function ActividadesPage() {
               </div>
               {/* Volver button bottom center */}
               <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-                <button onClick={() => setSelectedCat(null)} className="bg-[#1B4332] text-white text-[14px] font-semibold px-6 py-2 rounded-full active:opacity-80">Volver</button>
+                <button onClick={() => setSelectedCat(null)} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
               </div>
             </div>
 
             <div className="pt-2 md:max-w-4xl md:mx-auto">
-              {selectedCat === "Caminatas y Trekking" && (
-                <div className="px-5 pt-4 pb-2 text-center">
-                  <p className="text-[#3D2B1F] text-[14px] leading-relaxed">Exploración del entorno natural. Snacks incluidos y cocktail en salidas de puesta de sol.</p>
-                  <p className="text-[#9B9280] text-[13px] mt-2">Para más información, acércate al mesón de recepción</p>
+              {selectedCat !== "Otras Actividades" && (CAT_INTROS[selectedCat] || ui[`Intro — ${selectedCat}`]) && (
+                <div className="px-5 pt-4 pb-4 mx-4" style={{ borderBottom: "1px solid #E8DDD0" }}>
+                  <p className="text-[#3D2B1F] text-[14px] leading-relaxed">{uiText(`Intro — ${selectedCat}`, CAT_INTROS[selectedCat] ?? "")}</p>
+                  <div className="flex items-start gap-2 mt-2.5">
+                    <i className="fi-rs-calendar shrink-0" style={{ fontSize: 12, color: "#DBA33B", marginTop: 2 }} />
+                    <p className="text-[#9B9280] text-[12px]">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
+                  </div>
                 </div>
               )}
               {catActivities.length === 0 ? (

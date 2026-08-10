@@ -6,8 +6,10 @@
     "activities": "Experiences",
     "wellness": "Wellness",
     "family": "Family & Kids",
-    "emergency": "Emergency Contact",
-    "stay": "My Stay"
+    "emergency": "Emergencies",
+    "stay": "My Stay",
+    "ski": "Ski",
+    "info": "General Information"
   },
   "common": {
     "back": "Back",
