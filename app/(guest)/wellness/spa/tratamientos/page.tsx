@@ -50,7 +50,7 @@ export default function SpaTratamientosPage() {
       <Header />
 
       {/* Barra Superior Wellness — bajo el header, sobre el hero (Figma) */}
-      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {categories.map(cat => (
             <button

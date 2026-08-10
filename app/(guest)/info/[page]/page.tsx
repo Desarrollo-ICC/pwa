@@ -53,17 +53,23 @@ const LINK_IMG: Record<string, string> = {
   "/info/estacionamientos":         "/images/home-hero.jpg",
 };
 
+// Caché en memoria por sesión: al volver a una página el hero y el contenido
+// se pintan al instante (sin flash verde) mientras se refresca en segundo plano.
+const pageCache = new Map<string, Block[]>();
+
 export default function InfoPage({ params }: { params: Promise<{ page: string }> }) {
   const { page } = use(params);
   const router = useRouter();
-  const [blocks, setBlocks] = useState<Block[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [blocks, setBlocks] = useState<Block[]>(() => pageCache.get(page) ?? []);
+  const [loading, setLoading] = useState(() => !pageCache.has(page));
   const [activeSec, setActiveSec] = useState<number | null>(null);
 
   useEffect(() => {
+    if (pageCache.has(page)) { setBlocks(pageCache.get(page)!); setLoading(false); }
+    else { setBlocks([]); setLoading(true); }
     fetch(`/api/info-pages?page=${encodeURIComponent(page)}`)
       .then(r => r.json())
-      .then(d => { setBlocks(d.blocks ?? []); setLoading(false); })
+      .then(d => { pageCache.set(page, d.blocks ?? []); setBlocks(d.blocks ?? []); setLoading(false); })
       .catch(() => setLoading(false));
   }, [page]);
 
@@ -149,8 +155,8 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
     <div className="min-h-svh bg-[#FFFBF3]">
       <Header />
 
-      {navBlocks.length > 1 && (
-        <div className="bg-[#215732] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+      {(navBlocks.length > 1 || (NAV_PAGES.has(page) && loading)) && (
+        <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
           <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
             {navBlocks.map(b => (
               <button

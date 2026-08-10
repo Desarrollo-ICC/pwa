@@ -307,7 +307,7 @@ text('Traslado', 'El traslado terrestre y/o aéreo incluido en los paquetes tur�
 P('ui-bienestar', 'Bienestar (tarjetas del índice)');
 B('link', 'Spa Alunco', '/wellness/spa');
 B('link', 'Gimnasio', '/wellness/gimnasio');
-B('link', 'Piscinas', '/info/piscinas');
+rows.push({ page, pageTitle, block: 'link', title: 'Piscinas', content: '/info/piscinas', image: '/images/fig-hero-piscinas.jpg', active: true, order: ++ord });
 
 // Índice Comer y Beber
 P('ui-comer-y-beber', 'Comer y Beber (tarjetas del índice)');

@@ -11,6 +11,9 @@ import RichText from "@/components/RichText";
 
 interface InfoItem { id: number; section: string; title: string; content: string; }
 
+// caché en memoria para navegación instantánea
+let habCache: InfoItem[] | null = null;
+
 // Nav tabs (Barra Superior Habitación — Figma) → anchor to sections in the single scroll
 const NAV: { key: string; label: string }[] = [
   { key: "lavanderia",     label: "Lavandería" },
@@ -35,9 +38,9 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export default function HabitacionPage() {
   const router = useRouter();
-  const [info, setInfo] = useState<InfoItem[]>([]);
+  const [info, setInfo] = useState<InfoItem[]>(habCache ?? []);
   const uiText = useUiTexts("ui-habitacion");
-  const [heroImg, setHeroImg] = useState<string | null>(null);
+  const [heroImg, setHeroImg] = useState<string | null>(habCache ? (habCache.find(i => i.section === "hero_image")?.content ?? "/images/habitacion.jpg") : null);
   const [active, setActive] = useState("lavanderia");
   const [openLav, setOpenLav] = useState<string | null>("Lavandería - Hombre");
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -45,6 +48,7 @@ export default function HabitacionPage() {
   useEffect(() => {
     fetch("/api/habitacion/info").then(r => r.json()).then(d => {
       const items: InfoItem[] = d.info ?? [];
+      habCache = items;
       setInfo(items);
       const hero = items.find(i => i.section === "hero_image");
       setHeroImg(hero?.content ?? "/images/habitacion.jpg");
@@ -69,7 +73,7 @@ export default function HabitacionPage() {
       <Header />
 
       {/* Nav bar — below header, above hero (Figma: Barra Superior Habitación) */}
-      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex gap-1 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {visible.map(t => (
             <button
