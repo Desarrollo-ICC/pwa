@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 import HeroImage from "@/components/HeroImage";
@@ -47,7 +46,6 @@ export default function SpaTratamientosPage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
 
       {/* Barra Superior Wellness — bajo el header, sobre el hero (Figma) */}
       <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>

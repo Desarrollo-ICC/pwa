@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 
@@ -50,7 +49,6 @@ export default function WellnessPage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
       <div className="pt-16 page-pb">
         <div className="px-5 py-6">
           <h1 className="font-playfair font-bold text-center mb-6" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>

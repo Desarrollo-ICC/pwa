@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 import HeroImage from "@/components/HeroImage";
@@ -70,7 +69,6 @@ export default function HabitacionPage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
 
       {/* Nav bar — below header, above hero (Figma: Barra Superior Habitación) */}
       <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>

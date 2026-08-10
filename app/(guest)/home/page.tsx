@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 
 
@@ -212,7 +211,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
 
       {/* Hero */}
       <div className="relative h-[293px] md:h-[420px] overflow-hidden rounded-b-[40px]">

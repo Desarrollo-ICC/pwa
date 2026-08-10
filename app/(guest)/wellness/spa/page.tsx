@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 import HeroImage from "@/components/HeroImage";
@@ -51,7 +50,6 @@ export default function SpaPage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
 
       {/* Hero */}
       <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>

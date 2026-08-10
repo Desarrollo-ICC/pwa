@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 
@@ -469,7 +468,6 @@ export default function ActividadesPage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
 
       <div className={selectedCat ? "" : "pt-14"}>
 

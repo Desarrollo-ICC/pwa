@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 import HeroImage from "@/components/HeroImage";
@@ -38,7 +37,6 @@ export default function RestaurantCategoryPage({ params }: { params: Promise<{ r
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
 
       {/* Barra Superior de subcategorías — bajo el header, sobre el hero.
           Figma: solo en cartas tipo card (Coctelería, Comida); Vinos/Destilados/Otras Bebidas no la llevan. */}

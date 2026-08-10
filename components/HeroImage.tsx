@@ -20,7 +20,7 @@ export default function HeroImage({ src, alt }: { src: string | null; alt: strin
       src={src}
       alt={alt}
       onLoad={() => setLoaded(true)}
-      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
       style={{ opacity: loaded ? 1 : 0 }}
     />
   );

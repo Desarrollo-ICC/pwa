@@ -2,7 +2,6 @@
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 import HeroImage from "@/components/HeroImage";
@@ -86,7 +85,6 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
   if (isMenu && hasHero) {
     return (
       <div className="min-h-svh bg-[#FFFBF3]">
-        <Header />
         <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
           {!loading && <HeroImage src={heroImg} alt={pageTitle} />}
           <div className="absolute inset-0 bg-black/40" />
@@ -117,7 +115,6 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
   if (isMenu) {
     return (
       <div className="min-h-svh bg-[#FFFBF3]">
-        <Header />
         <div className="pt-14 px-4 pb-24 md:pb-12 md:max-w-2xl md:mx-auto">
           <h1 className="text-center mt-10 mb-6" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 40, lineHeight: 1, color: "#54432B" }}>
             {pageTitle}
@@ -153,7 +150,6 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
 
       {(navBlocks.length > 1 || (NAV_PAGES.has(page) && loading)) && (
         <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>

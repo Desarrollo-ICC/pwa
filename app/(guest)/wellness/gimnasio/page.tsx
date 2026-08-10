@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 import HeroImage from "@/components/HeroImage";
@@ -25,7 +24,6 @@ export default function GimnasioPage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
       <div>
         <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
           <HeroImage src={heroImg} alt="Gimnasio" />

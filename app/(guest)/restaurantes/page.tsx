@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 
 const DEFAULT_RESTAURANTS = [
@@ -50,7 +49,6 @@ export default function RestaurantesPage() {
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
-      <Header />
       <div className="pt-16 pb-24 md:pb-12">
         <div className="px-5 py-6 md:max-w-3xl md:mx-auto overflow-hidden">
           <h1 className="font-playfair font-bold text-center mb-6" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>
