@@ -123,15 +123,9 @@ span[class^="fi-bs-"]::before, span[class*=" fi-bs-"]::before {
 
 @layer base {
   html {
-    background-color: #1B4332;
-    background-image: url('/images/login-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-color: #F5F0E8;
     -webkit-tap-highlight-color: transparent;
     min-height: 100svh;
-    display: flex;
-    justify-content: center;
   }
 
   body {
@@ -140,10 +134,8 @@ span[class^="fi-bs-"]::before, span[class*=" fi-bs-"]::before {
     background-color: #F5F0E8;
     color: #1a1a1a;
     width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
+    margin: 0;
     min-height: 100svh;
-    box-shadow: 0 0 60px rgba(0,0,0,0.4);
   }
 
   /* Admin panel: full width, no mobile constraints */

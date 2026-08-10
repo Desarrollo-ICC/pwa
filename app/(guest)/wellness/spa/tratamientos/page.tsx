@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import VolverButton from "@/components/VolverButton";
+import { useUiTexts } from "@/components/useUiTexts";
 
 interface SpaService { id: number; category: string; name: string; description: string | null; duration: string | null; price: string | null; }
 interface Schedule { venue: string; hours: string; }
@@ -13,6 +15,7 @@ export default function SpaTratamientosPage() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("");
   const [services, setServices] = useState<SpaService[]>([]);
+  const uiText = useUiTexts("ui-tratamientos");
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [heroImg, setHeroImg] = useState<string | null>(null);
   const [reglamento, setReglamento] = useState("");
@@ -46,13 +49,13 @@ export default function SpaTratamientosPage() {
       <Header />
 
       {/* Barra Superior Wellness — bajo el header, sobre el hero (Figma) */}
-      <div className="bg-[#1B4332] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[15px] transition-all whitespace-nowrap ${activeCategory === cat ? "bg-[#215732] text-[#FFFBF3] font-medium" : "text-white/80 hover:text-white font-normal"}`}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[15px] transition-all whitespace-nowrap ${activeCategory === cat ? "bg-[#0E371B] text-[#FFFBF3] font-medium" : "text-white/80 hover:text-white font-normal"}`}
             >
               {cat}
             </button>
@@ -61,17 +64,17 @@ export default function SpaTratamientosPage() {
       </div>
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: heroImg ? `url('${heroImg}')` : undefined }}
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="font-playfair text-white font-bold text-center drop-shadow-lg" style={{ fontSize: 40, lineHeight: 1 }}>Menú de Tratamientos</h1>
+          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05, maxWidth: 340 }}>{uiText("Título", "Menú de Tratamientos")}</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
+          <VolverButton />
         </div>
       </div>
 
@@ -82,26 +85,7 @@ export default function SpaTratamientosPage() {
 
         {/* Servicios */}
         {filtered.length > 0 ? filtered.map(service => (
-          <div key={service.id} className="bg-[#F3ECE4] rounded-2xl p-4 border border-[#EDE6D8] shadow-sm">
-            <h3 className="font-bold text-[#3D2B1F] text-[15px] mb-1">{service.name}</h3>
-            {service.description && (
-              <p className="text-[#6B6B6B] text-[13px] leading-relaxed mb-3">{service.description}</p>
-            )}
-            <div className="flex items-center gap-4">
-              {service.price && (
-                <div className="flex items-center gap-1.5 text-[#C8963E]">
-                  <i className="fi-rs-usd-circle" style={{ fontSize: 14 }} />
-                  <span className="text-[13px] font-semibold">{service.price}</span>
-                </div>
-              )}
-              {service.duration && (
-                <div className="flex items-center gap-1.5 text-[#7B6354]">
-                  <i className="fi-rs-clock-three" style={{ fontSize: 14 }} />
-                  <span className="text-[13px]">{service.duration}</span>
-                </div>
-              )}
-            </div>
-          </div>
+          <TreatmentCard key={service.id} service={service} />
         )) : (
           <p className="text-[#9B9280] text-center py-8 text-[14px]">Cargando servicios...</p>
         )}
@@ -130,6 +114,51 @@ export default function SpaTratamientosPage() {
       </div>
 
       <BottomNav />
+    </div>
+  );
+}
+
+// Card de tratamiento (Figma: instancia "Masaje Barro" 382×137 — bg #F3ECE4 r12,
+// título Poltawski Bold 20, desc Cooper Hewitt 16, filete #D7D2CB, chevron #D7D2CB,
+// fila inferior: $ dorado + precio 15 café (izq) | reloj dorado + duración 15 café (der))
+function TreatmentCard({ service }: { service: SpaService }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="shadow-sm" style={{ backgroundColor: "#F3ECE4", borderRadius: 12, padding: "10px 16px 12px" }}>
+      <button onClick={() => setOpen(o => !o)} className="w-full flex justify-between items-center gap-3">
+        <span className="text-left" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, lineHeight: 1.2, color: "#54432B" }}>
+          {service.name}
+        </span>
+        <i className={`${open ? "fi-rs-angle-up" : "fi-rs-angle-down"} shrink-0`} style={{ fontSize: 13, color: "#D7D2CB" }} />
+      </button>
+      {open && (
+        <>
+          {service.description && (
+            <p className="mt-1" style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 16, lineHeight: 1.3, color: "#54432B" }}>
+              {service.description}
+            </p>
+          )}
+          {(service.price || service.duration) && (
+            <>
+              <div className="mt-2.5" style={{ borderTop: "1px solid #D7D2CB" }} />
+              <div className="flex items-center mt-2">
+                {service.price && (
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <i className="fi-ts-usd-circle" style={{ fontSize: 14, color: "#DBA33B", lineHeight: 1 }} />
+                    <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#54432B" }}>{service.price}</span>
+                  </div>
+                )}
+                {service.duration && (
+                  <div className="flex items-center gap-1.5">
+                    <i className="fi-ts-clock-three" style={{ fontSize: 14, color: "#DBA33B", lineHeight: 1 }} />
+                    <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#54432B" }}>{service.duration}</span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }

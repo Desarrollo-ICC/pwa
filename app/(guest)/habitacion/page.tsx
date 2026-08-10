@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import VolverButton from "@/components/VolverButton";
+import { useUiTexts } from "@/components/useUiTexts";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import RichText from "@/components/RichText";
 
@@ -10,7 +12,6 @@ interface InfoItem { id: number; section: string; title: string; content: string
 
 // Nav tabs (Barra Superior Habitación — Figma) → anchor to sections in the single scroll
 const NAV: { key: string; label: string }[] = [
-  { key: "housekeeping",   label: "Servicios de Aseo" },
   { key: "lavanderia",     label: "Lavandería" },
   { key: "caja",           label: "Caja de Seguridad" },
   { key: "minibar",        label: "Minibar" },
@@ -34,8 +35,9 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function HabitacionPage() {
   const router = useRouter();
   const [info, setInfo] = useState<InfoItem[]>([]);
+  const uiText = useUiTexts("ui-habitacion");
   const [heroImg, setHeroImg] = useState<string | null>(null);
-  const [active, setActive] = useState("housekeeping");
+  const [active, setActive] = useState("lavanderia");
   const [openLav, setOpenLav] = useState<string | null>("Lavandería - Hombre");
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -54,7 +56,7 @@ export default function HabitacionPage() {
     return m;
   }, [info]);
 
-  const visible = NAV.filter(s => s.key === "housekeeping" || (rowsBySection[s.key]?.length ?? 0) > 0);
+  const visible = NAV.filter(s => (rowsBySection[s.key]?.length ?? 0) > 0);
 
   const scrollTo = (key: string) => {
     setActive(key);
@@ -66,13 +68,13 @@ export default function HabitacionPage() {
       <Header />
 
       {/* Nav bar — below header, above hero (Figma: Barra Superior Habitación) */}
-      <div className="bg-[#1B4332] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex gap-1 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {visible.map(t => (
             <button
               key={t.key}
               onClick={() => scrollTo(t.key)}
-              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#215732] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
+              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#0E371B] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
             >
               {t.label}
             </button>
@@ -81,16 +83,14 @@ export default function HabitacionPage() {
       </div>
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
         {heroImg && <img src={heroImg} alt="Habitación" className="absolute inset-0 w-full h-full object-cover" />}
         <div className="absolute inset-0 bg-black/35" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>Habitación</h1>
+          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>{uiText("Título", "Habitación")}</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80 flex items-center gap-1.5">
-            <span style={{ fontSize: 11 }}>‹</span> Volver
-          </button>
+          <VolverButton />
         </div>
       </div>
 
@@ -126,31 +126,6 @@ function SectionBody({ secKey, label, rows, openLav, setOpenLav }: {
   openLav: string | null;
   setOpenLav: (v: string | null) => void;
 }) {
-  // ── Servicios de Aseo (housekeeping) ──
-  if (secKey === "housekeeping") {
-    return (
-      <>
-        <SectionTitle>{label}</SectionTitle>
-        {rows.length > 0 ? (
-          <div className="flex flex-col gap-4">
-            {rows.map(item => (
-              <div key={item.id}>
-                <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">{item.title}</h3>
-                <RichText text={item.content} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div>
-            <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">Horarios de Atención:</h3>
-            <p className="text-[#3D2B1F] text-[14px]" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>Housekeeping: 08:30 a 23:00</p>
-            <p className="text-[#3D2B1F] text-[14px]" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>Almuerzo: 08:30 a 16:00</p>
-          </div>
-        )}
-      </>
-    );
-  }
-
   // ── Lavandería — collapsible price cards (Figma) ──
   if (secKey === "lavanderia") {
     return (
@@ -161,9 +136,13 @@ function SectionBody({ secKey, label, rows, openLav, setOpenLav }: {
             const open = openLav === item.title;
             const lines = (item.content ?? "").split("\n").filter(l => l.trim());
             return (
-              <div key={item.id} className="bg-[#F3EDE4] rounded-2xl overflow-hidden" style={{ border: "1px solid #EDE6D8" }}>
-                <button onClick={() => setOpenLav(open ? null : item.title)} className="w-full flex justify-between items-center px-4 py-3.5">
-                  <span style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, lineHeight: 1, color: "#54432B" }} className="text-left">{item.title}</span>
+              <div key={item.id} className="bg-[#F3ECE4] rounded-2xl overflow-hidden" style={{ border: "1px solid #EDE6D8" }}>
+                <button onClick={() => setOpenLav(open ? null : item.title)} className="w-full flex justify-between items-center gap-3 px-4 py-3.5">
+                  <span className="flex-1 text-left">
+                    <span className="block" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, lineHeight: 1, color: "#54432B" }}>{item.title}</span>
+                    <span className="block my-2" style={{ height: 1, backgroundColor: "#D7D2CB" }} />
+                    <span className="block" style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 13, color: "#9B9280" }}>{lines.length} artículos</span>
+                  </span>
                   {open ? <ChevronUp size={16} className="text-[#B9AE9C] shrink-0" /> : <ChevronDown size={16} className="text-[#B9AE9C] shrink-0" />}
                 </button>
                 {open && (

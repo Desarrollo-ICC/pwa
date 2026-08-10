@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import VolverButton from "@/components/VolverButton";
 import { ChevronRight } from "lucide-react";
 import RichText from "@/components/RichText";
 
@@ -79,16 +80,14 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
     return (
       <div className="min-h-svh bg-[#FFFBF3]">
         <Header />
-        <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+        <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
           {!loading && <img src={heroImg} alt={pageTitle} className="absolute inset-0 w-full h-full object-cover" />}
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-0 flex items-center justify-center px-6">
-            <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05 }}>{pageTitle}</h1>
+            <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05, maxWidth: 340 }}>{pageTitle}</h1>
           </div>
           <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-            <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80">
-              <i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver
-            </button>
+            <VolverButton />
           </div>
         </div>
         <div className="px-5 py-7 pb-24 md:pb-12 md:max-w-2xl md:mx-auto flex flex-col gap-3">
@@ -133,7 +132,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
                 </div>
               </Link>
             ))}
-            <button onClick={() => router.back()} className="bg-[#1B4332] text-white px-6 py-1 rounded-full text-[15px] font-medium active:opacity-80 mb-10"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
+            <VolverButton />
           </div>
         </div>
         <BottomNav />
@@ -150,13 +149,13 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
       <Header />
 
       {navBlocks.length > 1 && (
-        <div className="bg-[#1B4332] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+        <div className="bg-[#215732] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
           <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
             {navBlocks.map(b => (
               <button
                 key={b.id}
                 onClick={() => { setActiveSec(b.id); document.getElementById(anchorId(b))?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
-                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] whitespace-nowrap transition-all ${activeSec === b.id ? "bg-[#215732] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
+                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] whitespace-nowrap transition-all ${activeSec === b.id ? "bg-[#0E371B] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
               >
                 {b.title}
               </button>
@@ -169,7 +168,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
       <div
         className="relative overflow-hidden shadow-lg bg-[#22382D]"
         style={{
-          height: 378,
+          height: 293,
           borderBottomLeftRadius: 40,
           borderBottomRightRadius: 40,
           background: isEmergency ? "linear-gradient(119.4deg, #AF4E2B 8.15%, #DB7C59 54.08%, #AF4E2B 100%)" : undefined,
@@ -178,14 +177,12 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
         {!isEmergency && !loading && <img src={heroImg} alt={pageTitle} className="absolute inset-0 w-full h-full object-cover" />}
         {!isEmergency && <div className="absolute inset-0 bg-black/40" />}
         <div className="absolute inset-0 flex items-center justify-center px-6">
-          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05 }}>
+          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05, maxWidth: 340 }}>
             {pageTitle || " "}
           </h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className={`text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80 ${isEmergency ? "bg-white text-[#DB7C59]" : "bg-[#1B4332] text-white"}`}>
-            <i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver
-          </button>
+          <VolverButton white={isEmergency} />
         </div>
       </div>
 
@@ -207,18 +204,34 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
               out.push(
                 <div key={`cards-${group[0].id}`} className="flex overflow-x-auto no-scrollbar gap-4 -mx-1 px-1 pb-2" style={{ scrollSnapType: "x mandatory" }}>
                   {group.map(c => {
-                    const [desc, place] = (c.content ?? "").split("\n@");
+                    // desc = líneas normales; metas = líneas que empiezan con @ (Figma: fila con ícono dorado)
+                    const allLines = (c.content ?? "").split("\n");
+                    const desc = allLines.filter(l => !l.startsWith("@")).join("\n").trim();
+                    const metas = allLines.filter(l => l.startsWith("@")).map(l => l.slice(1).trim());
+                    const metaIcon = (m: string) => {
+                      const t = m.toLowerCase();
+                      if (t.includes("reserva") || t.includes("recepción")) return "fi-rs-calendar";
+                      if (t.includes("hora")) return "fi-ts-clock-three";
+                      return "fi-rs-marker";
+                    };
                     return (
-                      <div key={c.id} className="shrink-0 w-[82vw] max-w-[320px] bg-[#F3EDE4] rounded-2xl overflow-hidden border border-[#EDE6D8] shadow-sm snap-center">
+                      <div key={c.id} className="shrink-0 w-[82vw] max-w-[340px] bg-[#F3ECE4] rounded-2xl overflow-hidden border border-[#EDE6D8] shadow-sm snap-center">
                         <img src={c.image ?? heroImg} alt={c.title ?? ""} className="w-full h-[190px] object-cover" />
                         <div className="p-4">
-                          <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-1.5">{c.title}</h3>
-                          <p className="text-[#6B6B6B] text-[13px] leading-relaxed mb-3">{desc}</p>
-                          {place && (
-                            <div className="flex items-center gap-1.5 text-[#7B6354] pt-2" style={{ borderTop: "1px solid #E8DDD0" }}>
-                              <i className="fi-rs-marker shrink-0" style={{ fontSize: 12, color: "#DBA33B" }} />
-                              <span className="text-[12px]">{place}</span>
-                            </div>
+                          <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 24, lineHeight: 1.1, color: "#54432B" }} className="mb-1.5">{c.title}</h3>
+                          <p className="whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 16, lineHeight: 1.4, color: "#54432B" }}>{desc}</p>
+                          {metas.length > 0 && (
+                            <>
+                              <div className="mt-3 mb-2.5" style={{ borderTop: "1px solid #DBA33B" }} />
+                              <div className="flex flex-col gap-1.5">
+                                {metas.map((m, k) => (
+                                  <div key={k} className="flex items-center gap-2">
+                                    <i className={`${metaIcon(m)} shrink-0`} style={{ fontSize: 13, color: "#DBA33B", lineHeight: 1 }} />
+                                    <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#54432B" }}>{m}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </>
                           )}
                         </div>
                       </div>
@@ -229,8 +242,20 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
               continue;
             }
             const needsRule = NAV_PAGES.has(page) && b.block === "text" && b.title && out.length > 0;
+            // Filete sobre títulos de sección (Figma: 2px #D7D2CB, 46px de aire)
+            const sectionRule = b.block === "section" && out.length > 0;
             out.push(
-              <div key={b.id} id={`sec-${b.id}`} style={needsRule ? { scrollMarginTop: 150, borderTop: "1px solid #E8DDD0", paddingTop: 20 } : { scrollMarginTop: 150 }}>
+              <div
+                key={b.id}
+                id={`sec-${b.id}`}
+                style={
+                  sectionRule
+                    ? { scrollMarginTop: 150, borderTop: "2px solid #D7D2CB", marginTop: 26, paddingTop: 46 }
+                    : needsRule
+                      ? { scrollMarginTop: 150, borderTop: "1px solid #E8DDD0", paddingTop: 20 }
+                      : { scrollMarginTop: 150 }
+                }
+              >
                 <BlockView b={b} emergency={isEmergency} />
               </div>
             );
@@ -279,13 +304,13 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
   // Price table
   if (b.block === "price") {
     return (
-      <div className="bg-[#F3EDE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-4">
+      <div className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-4">
         {b.title && <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-2">{b.title}</h3>}
-        <div className="flex flex-col">
+        <div className="flex flex-col divide-y divide-[#E8DDD0]">
           {lines.map((l, i) => {
             const [name, price] = l.split(/\s+—\s+/);
             return (
-              <div key={i} className="flex justify-between items-center py-1.5">
+              <div key={i} className="flex justify-between items-center py-2.5">
                 <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#54432B" }}>{name}</span>
                 {price && <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#DBA33B" }}>{price}</span>}
               </div>
@@ -314,7 +339,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
             }
             return (
               <li key={i} className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]/40 shrink-0 mt-2" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#54432B] shrink-0 mt-2" />
                 <span className="text-[#3D2B1F] text-[14px] leading-relaxed" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{l}</span>
               </li>
             );
@@ -330,9 +355,49 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
     return (
       <div className="flex flex-col items-center gap-3 text-center">
         <p className="text-[#3D2B1F] text-[14px] leading-relaxed">{b.title}</p>
-        <a href={`tel:${tel}`} className="inline-block bg-[#DB7C59] text-white font-semibold text-[16px] px-10 py-3 rounded-full active:opacity-80">
+        <a href={`tel:${tel}`} className="inline-block bg-[#DB7C59] text-white font-semibold text-[16px] px-10 py-3 rounded-full transition-colors hover:bg-[#C96A4B] active:bg-[#AF4E2B]">
           {b.content}
         </a>
+      </div>
+    );
+  }
+
+  // Filete divisor (Figma: 2px #D7D2CB)
+  if (b.block === "divider") {
+    return <div style={{ borderTop: "2px solid #D7D2CB", marginTop: 20, marginBottom: 20 }} />;
+  }
+
+  // Botón verde de enlace externo (Figma: "Botón verde 2" ancho completo, gradiente, texto Medium 20)
+  if (b.block === "button") {
+    return (
+      <a
+        href={b.content ?? "#"}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center w-full text-center active:opacity-80"
+        style={{
+          minHeight: 32,
+          borderRadius: 25,
+          padding: "3px 16px",
+          background: "linear-gradient(90deg, #215732 0%, #47835A 50%, #215732 100%)",
+          color: "#FFFBF3",
+          fontFamily: "'Cooper Hewitt', sans-serif",
+          fontWeight: 500,
+          fontSize: 20,
+          lineHeight: 1.2,
+        }}
+      >
+        {b.title}
+      </a>
+    );
+  }
+
+  // Título de sección grande (Figma: Poltawski Bold 32, centrado — p.ej. "Traslados")
+  if (b.block === "section") {
+    return (
+      <div>
+        {b.title && <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, lineHeight: 1.1, color: "#54432B", textAlign: "center" }} className="mb-3">{b.title}</h2>}
+        {b.content && <RichText text={b.content} />}
       </div>
     );
   }

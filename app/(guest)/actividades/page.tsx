@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import VolverButton from "@/components/VolverButton";
 
 interface Activity {
   id: number;
@@ -69,15 +70,17 @@ function extractBullets(desc: string | null): string[] {
     .slice(1, 7);
 }
 
+// Íconos según el Figma (nombres de los frames en las cards):
+// reloj-tres, montana, tacometro-mas-rapido, ruta, persona-sencilla, calendario
 function bulletIcon(text: string): string {
   const t = text.toLowerCase();
-  if (t.includes("hora") || t.includes("minuto") || t.includes("duración")) return "fi-ts-clock";
+  if (t.includes("hora") || t.includes("minuto") || t.includes("duración")) return "fi-ts-clock-three";
   if (t.includes("altitud") || t.includes("msnm")) return "fi-ts-mountain";
-  if (t.includes("dificultad")) return "fi-ts-bolt";
+  if (t.includes("dificultad") || t.includes("variable") || t.includes("pista")) return "fi-ts-tachometer-fastest";
   if (t.includes("km") || t.includes("distancia")) return "fi-ts-route";
-  if (t.includes("pasajero") || t.includes("persona") || t.includes("guía") || t.includes("grupo")) return "fi-ts-users";
-  if (t.includes("costo") || t.includes("precio") || t.includes("adicional")) return "fi-ts-receipt";
-  if (t.includes("reserva") || t.includes("recepción") || t.includes("anexo")) return "fi-ts-info";
+  if (t.includes("pasajero") || t.includes("persona") || t.includes("guía") || t.includes("grupo")) return "fi-ts-person-simple";
+  if (t.includes("costo") || t.includes("precio") || t.includes("adicional")) return "fi-ts-usd-circle";
+  if (t.includes("reserva") || t.includes("recepción") || t.includes("anexo")) return "fi-ts-calendar";
   return "fi-ts-check";
 }
 
@@ -86,7 +89,7 @@ function ActivityCard({ activity, catImage }: { activity: Activity; catImage: st
   const imgSrc = activity.image ?? catImage;
 
   return (
-    <div className="shrink-0 w-[82vw] max-w-[340px] bg-[#F3EDE4] rounded-2xl overflow-hidden shadow-sm snap-center">
+    <div className="shrink-0 w-[82vw] max-w-[340px] bg-[#F3ECE4] rounded-2xl overflow-hidden shadow-sm snap-center">
       <div className="relative h-[245px] w-full bg-gray-200">
         <img src={imgSrc} alt={activity.name} className="absolute inset-0 w-full h-full object-cover" />
         {activity.price && (
@@ -99,16 +102,16 @@ function ActivityCard({ activity, catImage }: { activity: Activity; catImage: st
         <h3 className="font-playfair font-bold text-[#54432B] text-[24px] leading-none mb-1.5">
           {activity.name}
         </h3>
-        <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 400, fontSize: 16, lineHeight: 1.4, color: "#3F2012" }} className="mb-3">
+        <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 400, fontSize: 16, lineHeight: 1.4, color: "#3F2012" }}>
           {shortDesc(activity.description)}
         </p>
+        {/* Divisor bajo la descripción — dorado como los íconos (Figma) */}
+        <div className="my-3" style={{ borderTop: "1px solid #DBA33B" }} />
         {bullets.length > 0 && (
           <ul className="flex flex-col gap-2">
             {bullets.map((b, i) => (
               <li key={i} className="flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-[#1B4332]/10 flex items-center justify-center shrink-0">
-                  <i className={`${bulletIcon(b)} text-[#DBA33B]`} style={{ fontSize: 11 }} />
-                </span>
+                <i className={`${bulletIcon(b)} shrink-0`} style={{ fontSize: 17, color: "#DBA33B", lineHeight: 1 }} />
                 <span className="text-[#3D3D3D] text-[15px] leading-snug" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{b}</span>
               </li>
             ))}
@@ -126,6 +129,30 @@ function ActivityCard({ activity, catImage }: { activity: Activity; catImage: st
 function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiActivities: Activity[] }) {
   const [weather, setWeather] = useState<{ temp: number; feels: number; humidity: number; wind: number; code: number } | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
+  // Tablas editables desde el admin (Páginas de Información → ui-centro-ski, filas "a | b | c | d")
+  const [tables, setTables] = useState<{ andariveles: string[][]; pistas: string[][] }>({ andariveles: ANDARIVELES, pistas: PISTAS });
+  const [csUi, setCsUi] = useState<Record<string, string>>({});
+  const csText = (k: string, fb: string) => (csUi[k] !== undefined && csUi[k] !== "" ? csUi[k] : fb);
+
+  useEffect(() => {
+    fetch("/api/info-pages?page=ui-centro-ski")
+      .then(r => r.json())
+      .then(d => {
+        const blocks: { block?: string; title: string | null; content: string | null }[] = d.blocks ?? [];
+        const m: Record<string, string> = {};
+        for (const b of blocks) if (b.title && b.block === "text") m[b.title] = b.content ?? "";
+        setCsUi(m);
+        const parse = (title: string) => {
+          const b = blocks.find(x => x.title === title);
+          if (!b?.content) return null;
+          return b.content.split("\n").filter(l => l.trim()).map(l => l.split("|").map(c => c.trim()));
+        };
+        const a = parse("Reporte Andariveles");
+        const pi = parse("Pistas");
+        if (a || pi) setTables(t => ({ andariveles: a ?? t.andariveles, pistas: pi ?? t.pistas }));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch(
@@ -166,7 +193,7 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
   return (
     <div className="pb-24">
       {/* Hero */}
-      <div className="relative overflow-hidden w-full" style={{ height: 260, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+      <div className="relative overflow-hidden w-full" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
         <img src="/images/actividades.jpg" alt="Centro de Ski" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="absolute inset-0 flex items-center justify-center">
@@ -175,107 +202,148 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
           </h2>
         </div>
         <div className="absolute bottom-5 left-0 right-0 flex justify-center">
-          <button onClick={onBack} className="bg-[#1B4332] text-white text-[14px] font-semibold px-5 py-2 rounded-full active:opacity-80 flex items-center gap-1.5">
-            <i className="fi-ts-angle-left" style={{ fontSize: 12 }} />
-            Volver
-          </button>
+          <VolverButton onClick={onBack} />
         </div>
       </div>
 
-      <div className="px-5 pt-5 max-w-md mx-auto">
-        {/* Description */}
-        <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#3D2B1F", lineHeight: 1.55 }} className="mb-3">
-          SKI con más de 35 km de pistas y opciones para todos los niveles. Vive una experiencia en un entorno natural privilegiado.
+      <div className="px-5 pt-5 max-w-md mx-auto md:max-w-3xl">
+        {/* Intro (Figma) */}
+        <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 16, color: "#54432B", lineHeight: 1.4 }}>
+          {csText("Intro", "Ski con más de 35 km de pistas y opciones para todos los niveles. Vive una experiencia en un entorno natural privilegiado.")}
         </p>
 
-        {/* Info note */}
-        <div className="flex items-center gap-2 pb-4 mb-4" style={{ borderBottom: "1px solid #E8DDD0" }}>
-          <i className="fi-ts-info" style={{ fontSize: 13, color: "#D4722A" }} />
-          <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 13, color: "#9B9280" }}>
-            Para más información, acércate al mesón de recepción
-          </span>
+        {/* Divisor dorado + nota del mesón (Figma) */}
+        <div className="mt-3" style={{ borderTop: "1px solid #DBA33B" }} />
+        <div className="flex items-start gap-2 mt-2.5">
+          <i className="fi-rs-calendar shrink-0" style={{ fontSize: 12, color: "#DBA33B", marginTop: 2 }} />
+          <p className="text-[#9B9280] text-[12px]">{csText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
         </div>
 
-        {/* Weather widget */}
+        <div className="my-6" style={{ borderTop: "2px solid #D7D2CB" }} />
+
+        {/* Clima (Figma: card 381×124 r24, gradiente, textos #86BA86) */}
         {weather ? (
-          <div className="rounded-2xl p-4 mb-5 flex items-center justify-between" style={{ backgroundColor: "#1B4332" }}>
-            <div>
-              <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.65)" }} className="mb-0.5">
-                Clima en Chillán
-              </p>
-              <p className="font-playfair font-bold text-white" style={{ fontSize: 48, lineHeight: 1 }}>
-                {weather.temp}<span style={{ fontSize: 22 }}>°C</span>
-              </p>
-              <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-2">
-                <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)" }}>
-                  Sensación: <strong>{weather.feels}°C</strong>
-                </span>
-                <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)" }}>
-                  Humedad: <strong>{weather.humidity}%</strong>
-                </span>
-                <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.85)" }}>
-                  Viento: <strong>{weather.wind} km/h</strong>
-                </span>
+          <div className="rounded-3xl px-5 py-4" style={{ background: "linear-gradient(135deg, #215732 0%, #47835A 100%)", borderRadius: 24 }}>
+            <div className="flex items-start justify-between">
+              <div>
+                <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#86BA86" }} className="mb-0.5">Clima en Chillán</p>
+                <p className="leading-none" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 48, color: "#FFFBF3" }}>
+                  {weather.temp}<span style={{ fontSize: 24, fontWeight: 400 }}>°c</span>
+                </p>
+              </div>
+              <div className="flex items-center justify-center shrink-0" style={{ width: 59, height: 59, borderRadius: 12, background: "linear-gradient(135deg, #47835A 0%, #215732 100%)" }}>
+                <i className={`${weatherIcon(weather.code)} text-white`} style={{ fontSize: 28 }} />
               </div>
             </div>
-            <div className="w-[52px] h-[52px] rounded-xl bg-white/20 flex items-center justify-center shrink-0 ml-3">
-              <i className={`${weatherIcon(weather.code)} text-white`} style={{ fontSize: 26 }} />
+            <div className="mt-2 mb-2" style={{ borderTop: "1px solid #86BA86" }} />
+            <div className="flex justify-between" style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#86BA86" }}>
+              <span>Sensación: {weather.feels}°C</span>
+              <span>Humedad: {weather.humidity}%</span>
+              <span>Viento: {weather.wind} km/h</span>
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl mb-5 animate-pulse" style={{ backgroundColor: "#1B4332", height: 100 }} />
+          <div className="animate-pulse" style={{ background: "#215732", height: 124, borderRadius: 24 }} />
         )}
 
-        {/* Rows */}
-        <div style={{ borderTop: "1px solid #E8DDD0" }}>
-          {rows.map((row, idx) => (
-            <div key={row.key} style={{ borderBottom: "1px solid #E8DDD0" }}>
-              {row.href ? (
-                <a
-                  href={row.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between py-4 active:opacity-60"
-                >
-                  <span className="font-playfair font-bold text-[#54432B]" style={{ fontSize: 18 }}>{row.label}</span>
-                  <i className="fi-ts-angle-right text-[#54432B]" style={{ fontSize: 14 }} />
-                </a>
-              ) : (
-                <>
-                  <button
-                    className="w-full flex items-center justify-between py-4 active:opacity-60"
-                    onClick={() => setExpanded(expanded === row.key ? null : row.key)}
-                  >
-                    <span className="font-playfair font-bold text-[#54432B] text-left" style={{ fontSize: 18 }}>{row.label}</span>
-                    <i className={`fi-ts-angle-${expanded === row.key ? "down" : "right"} text-[#54432B]`} style={{ fontSize: 14 }} />
-                  </button>
-                  {expanded === "precios" && row.key === "precios" && (
-                    <div className="pb-4">
-                      {[
-                        { title: "Renta por Día", items: rentaPorDia },
-                        { title: "Renta Semanal", items: rentaSemanal },
-                        { title: "Servicios", items: servicios },
-                      ].filter((g) => g.items.length > 0).map((group) => (
-                        <div key={group.title} className="mb-4">
-                          <p className="font-playfair font-bold text-[#54432B] mb-2" style={{ fontSize: 15 }}>{group.title}</p>
-                          {group.items.map((item) => (
-                            <div key={item.id} className="flex justify-between items-center py-2" style={{ borderBottom: "1px solid #F0E8DF" }}>
-                              <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 13, color: "#3D2B1F" }}>{item.name}</span>
-                              {item.price && (
-                                <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 13, fontWeight: 700, color: "#1B4332" }}>{item.price}</span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
-        </div>
+        <div className="my-6" style={{ borderTop: "2px solid #D7D2CB" }} />
+
+        {/* Reporte Andariveles (Figma: tabla con scroll horizontal) */}
+        <h3 className="font-playfair font-bold text-center" style={{ fontSize: 32, lineHeight: 1.1, color: "#54432B" }}>{csText("Título andariveles", "Reporte Andariveles")}</h3>
+        <SkiTable
+          headers={["Nombre", "Tipo", "Horario", "Estado"]}
+          rows={tables.andariveles}
+          statusCol={3}
+        />
+
+        <div className="my-6" style={{ borderTop: "2px solid #D7D2CB" }} />
+
+        {/* Pistas (Figma) */}
+        <h3 className="font-playfair font-bold text-center" style={{ fontSize: 32, lineHeight: 1.1, color: "#54432B" }}>{csText("Título pistas", "Pistas")}</h3>
+        <SkiTable
+          headers={["Nombre", "Estado", "Dificultad", "Condición"]}
+          rows={tables.pistas}
+          statusCol={1}
+        />
       </div>
+    </div>
+  );
+}
+
+// Datos del reporte (Figma "PWA- Centro de Ski"; se actualizan a mano por ahora)
+const ANDARIVELES: string[][] = [
+  ["Tata", "Silla Cuádruple", "Zona Baja", "Cerrado"],
+  ["Refugio", "Silla Triple", "Zona Baja", "Abierto"],
+];
+
+const PISTAS: string[][] = [
+  ["Cóndor", "Cerrado", "Experto", "Ninguna"],
+  ["Cóndor II", "Abierto", "Experto", "Ninguna"],
+  ["Moto-X", "Cerrado", "Intermedio", "Ninguna"],
+  ["Curvitas", "Abierto", "Intermedio", "Ninguna"],
+  ["Novicios", "Cerrado", "Principiante", "Ninguna"],
+  ["Súper-X", "Abierto", "Avanzado", "Ninguna"],
+  ["Nacional", "Cerrado", "Avanzado", "Ninguna"],
+  ["Bosque Zion", "Abierto", "Intermedio", "Ninguna"],
+  ["Renegado", "Cerrado", "Avanzado", "Ninguna"],
+  ["Águila", "Abierto", "Experto", "Ninguna"],
+  ["Fumarolas – Sendero Enduro", "Cerrado", "Intermedio", "Ninguna"],
+  ["Candado – Sendero Enduro", "Abierto", "Experto", "Ninguna"],
+  ["Garganta – Sendero Enduro", "Cerrado", "Experto", "Ninguna"],
+  ["Sendero E-Bike", "Abierto", "Principiante", "Ninguna"],
+  ["Sendero Familiar", "Cerrado", "Principiante", "Ninguna"],
+];
+
+// Tabla con scroll horizontal (Figma: headers Poltawski Bold 24 #3F2012, filas 16,
+// Estado en verde #47835A / teja #DB7C59)
+// Íconos de dificultad (Figma: Experto ◆◆ negro, Avanzado ◆ negro,
+// Intermedio cuadrado azul #457DAF, Principiante círculo verde #47835A)
+function DifficultyIcon({ label }: { label: string }) {
+  const diamond = <span className="inline-block" style={{ width: 10, height: 10, backgroundColor: "#000", transform: "rotate(45deg)" }} />;
+  switch (label.trim()) {
+    case "Experto":
+      return <span className="inline-flex items-center gap-1">{diamond}{diamond}</span>;
+    case "Avanzado":
+      return diamond;
+    case "Intermedio":
+      return <span className="inline-block" style={{ width: 13, height: 13, backgroundColor: "#457DAF" }} />;
+    case "Principiante":
+      return <span className="inline-block rounded-full" style={{ width: 13, height: 13, backgroundColor: "#47835A" }} />;
+    default:
+      return null;
+  }
+}
+
+function SkiTable({ headers, rows, statusCol }: { headers: string[]; rows: string[][]; statusCol: number }) {
+  return (
+    <div className="overflow-x-auto no-scrollbar -mx-5 px-5 mt-4">
+      <table style={{ minWidth: 560, width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            {headers.map(h => (
+              <th key={h} className="text-left pb-2 pr-4" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 24, color: "#3F2012", borderBottom: "1px solid #D7D2CB" }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i}>
+              {r.map((c, j) => (
+                <td key={j} className="py-2.5 pr-4" style={{
+                  fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 16,
+                  color: j === statusCol ? (c === "Abierto" ? "#47835A" : "#DB7C59") : "#3F2012",
+                  borderBottom: i < rows.length - 1 ? "1px solid #D7D2CB" : "none",
+                }}>
+                  <span className="inline-flex items-center gap-2">
+                    <DifficultyIcon label={c} />
+                    {c}
+                  </span>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -295,14 +363,14 @@ function ActivitySlider({ activities, catImage }: { activities: Activity[]; catI
       {/* Desktop arrows */}
       <button
         onClick={() => scroll("left")}
-        className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 items-center justify-center text-[#54432B] hover:bg-[#F3EDE4] transition-colors"
+        className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 items-center justify-center text-[#54432B] hover:bg-[#F3ECE4] transition-colors"
         aria-label="Anterior"
       >
         <i className="fi-ts-angle-left" style={{ fontSize: 16 }} />
       </button>
       <button
         onClick={() => scroll("right")}
-        className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 items-center justify-center text-[#54432B] hover:bg-[#F3EDE4] transition-colors"
+        className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 items-center justify-center text-[#54432B] hover:bg-[#F3ECE4] transition-colors"
         aria-label="Siguiente"
       >
         <i className="fi-ts-angle-right" style={{ fontSize: 16 }} />
@@ -408,19 +476,29 @@ export default function ActividadesPage() {
         {!selectedCat ? (
           /* ── Category list ── */
           <div className="flex flex-col">
-          {/* Season toggle */}
-          <div className="flex gap-2 px-4 pt-8 pb-3 bg-[#FFFBF3] justify-center">
-            {(["verano", "invierno"] as const).map((s) => (
-              <button
-                key={s}
-                onClick={() => { setSeason(s); setSelectedCat(null); }}
-                className={`px-8 py-2 rounded-full transition-all border font-playfair font-bold text-center text-lg md:text-xl ${
-                  season === s ? "bg-[#1B4332] text-white border-[#1B4332]" : "text-[#1B4332] border-[#1B4332]/40 bg-transparent"
-                }`}
-              >
-                {s === "verano" ? "Verano" : "Invierno"}
-              </button>
-            ))}
+          {/* Selector de Temporada (Figma: cápsula 382×50 r25, mitad activa con gradiente,
+              texto Poltawski Bold 24 — activo #FFFBF3, inactivo #54432B) */}
+          <div className="px-4 pt-8 pb-3 bg-[#FFFBF3] flex justify-center">
+            <div className="grid grid-cols-2 w-full" style={{ maxWidth: 382, height: 50, borderRadius: 25, backgroundColor: "#F3ECE4", overflow: "hidden" }}>
+              {(["verano", "invierno"] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => { setSeason(s); setSelectedCat(null); }}
+                  className="transition-all"
+                  style={{
+                    fontFamily: "'Poltawski Nowy', Georgia, serif",
+                    fontWeight: 700,
+                    fontSize: 24,
+                    // recto en el borde donde se une con el otro botón (Figma)
+                    borderRadius: s === "verano" ? "25px 0 0 25px" : "0 25px 25px 0",
+                    background: season === s ? "linear-gradient(90deg, #215732 0%, #47835A 53%, #215732 100%)" : "transparent",
+                    color: season === s ? "#FFFBF3" : "#54432B",
+                  }}
+                >
+                  {s === "verano" ? "Verano" : "Invierno"}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="px-5 py-6 md:max-w-3xl md:mx-auto">
             <h1 className="font-playfair font-bold text-center mb-6" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>
@@ -451,13 +529,13 @@ export default function ActividadesPage() {
                   <ul className="flex flex-col gap-1.5">
                     {uiText("Cuidado del Entorno — puntos", "Regresa siempre con tu basura al hotel.\nEvita fumar o encender fuego fuera de las áreas permitidas.\nDurante el verano el riesgo de incendios es muy alto. Tu precaución protege el entorno de todos.").split("\n").filter(Boolean).map((t, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]/40 shrink-0 mt-1.5" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#54432B] shrink-0 mt-1.5" />
                         <span className="text-[#3D2B1F] text-[13px] leading-relaxed">{t}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <button onClick={() => window.history.back()} className="bg-[#1B4332] text-white px-6 py-1 rounded-full text-[15px] font-medium active:opacity-80 mb-20"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
+                <VolverButton />
               </div>
             )}
           </div>
@@ -467,7 +545,7 @@ export default function ActividadesPage() {
         ) : (
           <div className="pb-24 md:pb-12">
             {/* Hero — full width */}
-            <div className="relative overflow-hidden w-full" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+            <div className="relative overflow-hidden w-full" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
               <img
                 src={getCatImg(selectedCat)}
                 alt={selectedCat}
@@ -476,20 +554,22 @@ export default function ActividadesPage() {
               <div className="absolute inset-0 bg-black/40" />
               {/* Category title centered */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <h2 className="font-playfair font-bold text-center drop-shadow-lg" style={{ fontSize: 40, lineHeight: 1, color: 'white' }}>
+                <h2 className="font-playfair font-bold text-center drop-shadow-lg" style={{ fontSize: 40, lineHeight: 1.05, color: 'white', maxWidth: 340 }}>
                   {selectedCat}
                 </h2>
               </div>
               {/* Volver button bottom center */}
               <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-                <button onClick={() => setSelectedCat(null)} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
+                <VolverButton onClick={() => setSelectedCat(null)} />
               </div>
             </div>
 
             <div className="pt-2 md:max-w-4xl md:mx-auto">
               {selectedCat !== "Otras Actividades" && (CAT_INTROS[selectedCat] || ui[`Intro — ${selectedCat}`]) && (
-                <div className="px-5 pt-4 pb-4 mx-4" style={{ borderBottom: "1px solid #E8DDD0" }}>
+                <div className="px-5 pt-4 pb-4 mx-4" style={{ borderBottom: "2px solid #D7D2CB" }}>
                   <p className="text-[#3D2B1F] text-[14px] leading-relaxed">{uiText(`Intro — ${selectedCat}`, CAT_INTROS[selectedCat] ?? "")}</p>
+                  {/* Divisor dorado sobre la nota del mesón (Figma) */}
+                  <div className="mt-3" style={{ borderTop: "1px solid #DBA33B" }} />
                   <div className="flex items-start gap-2 mt-2.5">
                     <i className="fi-rs-calendar shrink-0" style={{ fontSize: 12, color: "#DBA33B", marginTop: 2 }} />
                     <p className="text-[#9B9280] text-[12px]">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
@@ -499,20 +579,35 @@ export default function ActividadesPage() {
               {catActivities.length === 0 ? (
                 <p className="text-[#9B9280] text-center py-10 text-[14px] px-4">Próximamente actividades disponibles</p>
               ) : isOtras ? (
+                /* Figma "PWA- Otras Actividades": título 32 centrado → intro izq → divisor
+                   dorado + nota mesón → cards; filete 2px entre las dos secciones */
                 <>
                   {freeActs.length > 0 && (
                     <>
-                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>Actividades Gratuitas</h3>
-                      <p className="text-[#3D2B1F] text-[14px] text-center px-6 mb-1">{uiText("Actividades Gratuitas", "Acceso a espacios deportivos y recreativos en las dependencias del hotel.")}</p>
-                      <p className="text-[#9B9280] text-[13px] text-center px-6 mb-1">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
+                      <h3 className="font-playfair font-bold text-center px-4 mt-4" style={{ fontSize: 32, lineHeight: 1.1, color: '#54432B' }}>Actividades Gratuitas</h3>
+                      <div className="px-5 pt-3 pb-2 mx-4">
+                        <p className="text-[#3D2B1F] text-[14px] leading-relaxed">{uiText("Actividades Gratuitas", "Acceso a espacios deportivos y recreativos en las dependencias del hotel.")}</p>
+                        <div className="mt-3" style={{ borderTop: "1px solid #DBA33B" }} />
+                        <div className="flex items-start gap-2 mt-2.5">
+                          <i className="fi-rs-calendar shrink-0" style={{ fontSize: 12, color: "#DBA33B", marginTop: 2 }} />
+                          <p className="text-[#9B9280] text-[12px]">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
+                        </div>
+                      </div>
                       <ActivitySlider activities={freeActs} catImage={getCatImg(selectedCat)} />
                     </>
                   )}
                   {paidActs.length > 0 && (
                     <>
-                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>Actividades con Costo Extra</h3>
-                      <p className="text-[#3D2B1F] text-[14px] text-center px-6 mb-1">{uiText("Actividades con Costo Extra", "Experiencias para explorar el entorno.")}</p>
-                      <p className="text-[#9B9280] text-[13px] text-center px-6 mb-1">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
+                      <div className="mx-8 mt-8 mb-8" style={{ borderTop: "2px solid #D7D2CB" }} />
+                      <h3 className="font-playfair font-bold text-center px-4" style={{ fontSize: 32, lineHeight: 1.1, color: '#54432B' }}>Actividades con Costo Extra</h3>
+                      <div className="px-5 pt-3 pb-2 mx-4">
+                        <p className="text-[#3D2B1F] text-[14px] leading-relaxed">{uiText("Actividades con Costo Extra", "Experiencias para explorar el entorno.")}</p>
+                        <div className="mt-3" style={{ borderTop: "1px solid #DBA33B" }} />
+                        <div className="flex items-start gap-2 mt-2.5">
+                          <i className="fi-rs-calendar shrink-0" style={{ fontSize: 12, color: "#DBA33B", marginTop: 2 }} />
+                          <p className="text-[#9B9280] text-[12px]">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
+                        </div>
+                      </div>
                       <ActivitySlider activities={paidActs} catImage={getCatImg(selectedCat)} />
                     </>
                   )}
@@ -537,11 +632,14 @@ export default function ActividadesPage() {
               )}
             </div>
 
-            <div className="px-5 mt-6 mb-8 text-center">
-              <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: 1, color: '#DB7C59', textAlign: 'center' }}>
-                {uiText("Nota full day", "Las actividades full day son operadas por proveedor externo y tienen costo adicional.")}
-              </p>
-            </div>
+            {/* Nota full day: en el Figma solo existe en Caminatas y Trekking */}
+            {selectedCat === "Caminatas y Trekking" && (
+              <div className="px-5 mt-6 mb-8 text-center">
+                <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: 1, color: '#DB7C59', textAlign: 'center' }}>
+                  {uiText("Nota full day", "Las actividades full day son operadas por proveedor externo y tienen costo adicional.")}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

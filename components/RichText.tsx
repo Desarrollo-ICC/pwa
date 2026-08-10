@@ -31,7 +31,7 @@ export default function RichText({ text, className }: { text: string; className?
         <ul key={key++} className="flex flex-col gap-1.5 my-1.5">
           {items.map((it, j) => (
             <li key={j} className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]/40 shrink-0 mt-[7px]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#54432B] shrink-0 mt-[7px]" />
               <span>{inline(it)}</span>
             </li>
           ))}
@@ -44,7 +44,8 @@ export default function RichText({ text, className }: { text: string; className?
       const items: string[] = [];
       while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) items.push(lines[i++].replace(/^\s*\d+\.\s+/, ""));
       out.push(
-        <ol key={key++} className="flex flex-col gap-1 my-1.5" style={{ listStyle: "decimal inside" }}>
+        // sangría francesa: el número cuelga y el texto queda alineado (Figma)
+        <ol key={key++} className="flex flex-col gap-1 my-1.5" style={{ listStyleType: "decimal", paddingLeft: 22 }}>
           {items.map((it, j) => <li key={j}>{inline(it)}</li>)}
         </ol>
       );
@@ -52,6 +53,19 @@ export default function RichText({ text, className }: { text: string; className?
     }
 
     if (line.trim() === "") { out.push(<div key={key++} className="h-2" />); i++; continue; }
+
+    // Párrafo enumerado con letra ("A. …"): sangría francesa como el Figma
+    const lettered = line.match(/^([A-Z])\.\s+(.*)$/);
+    if (lettered) {
+      out.push(
+        <p key={key++} className="flex gap-2">
+          <span className="shrink-0">{lettered[1]}.</span>
+          <span>{inline(lettered[2])}</span>
+        </p>
+      );
+      i++;
+      continue;
+    }
 
     out.push(<p key={key++}>{inline(line)}</p>);
     i++;

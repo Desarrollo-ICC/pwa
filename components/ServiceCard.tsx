@@ -8,7 +8,7 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ name, description, duration, price }: ServiceCardProps) {
   return (
-    <div className="bg-[#F3EDE4] rounded-2xl p-4 shadow-sm border border-[#EDE6D8]">
+    <div className="bg-[#F3ECE4] rounded-2xl p-4 shadow-sm border border-[#EDE6D8]">
       <h3 className="font-semibold text-[#1B4332] text-[15px] mb-1">{name}</h3>
       {description && (
         <p className="text-[#6B6B6B] text-[13px] leading-relaxed mb-3">{description}</p>

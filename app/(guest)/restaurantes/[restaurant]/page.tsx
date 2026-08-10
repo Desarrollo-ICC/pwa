@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import VolverButton from "@/components/VolverButton";
+import { useUiTexts } from "@/components/useUiTexts";
 import { ChevronRight } from "lucide-react";
 import { RESTAURANTS, slugifyCat } from "../config";
 
@@ -16,6 +18,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
   const cfg = RESTAURANTS[restaurant];
   const [items, setItems] = useState<Item[]>([]);
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const uiText = useUiTexts("ui-restaurantes");
 
   useEffect(() => {
     if (!cfg) return;
@@ -33,14 +36,14 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
       <Header />
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+      <div className="relative overflow-hidden shadow-lg" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
         <img src={cfg.image} alt={cfg.label} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>{cfg.label}</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
+          <VolverButton />
         </div>
       </div>
 
@@ -49,7 +52,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
         {schedules.length > 0 && (
           <div className="mb-6">
             <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-2">
-              Horarios de Atención:
+              {uiText("Título horarios", "Horarios de Atención:")}
             </h2>
             {schedules.map(s => {
               const isHeading = /^(Desayuno|Almuerzo|Cena|Once):?$/i.test(s.info.trim());
@@ -65,12 +68,14 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
         {/* Menú del día */}
         {daily.length > 0 && (
           <div className="mb-7">
-            <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 28, color: "#54432B", textAlign: "center" }} className="mb-3">
-              Menú del día
+            {/* Filete sobre Menú del día (Figma) */}
+            {schedules.length > 0 && <div style={{ borderTop: "2px solid #D7D2CB", marginTop: 40, marginBottom: 46 }} />}
+            <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, color: "#54432B", textAlign: "center" }} className="mb-3">
+              {uiText("Título menú del día", "Menú del día")}
             </h2>
             <div className="flex overflow-x-auto no-scrollbar gap-4 pb-2" style={{ scrollSnapType: "x mandatory" }}>
               {daily.map(d => (
-                <div key={d.id} className="shrink-0 w-[82vw] max-w-[320px] bg-[#F3EDE4] rounded-2xl overflow-hidden border border-[#EDE6D8] shadow-sm snap-center">
+                <div key={d.id} className="shrink-0 w-[82vw] max-w-[320px] bg-[#F3ECE4] rounded-2xl overflow-hidden border border-[#EDE6D8] shadow-sm snap-center">
                   <img src={cfg.image} alt={d.name} className="w-full h-[170px] object-cover" />
                   <div className="p-4">
                     <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-1">{d.name}</h3>
@@ -86,8 +91,9 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
         {/* Carta única → se muestra en la misma página (Figma: Muffin Café) */}
         {menuCats.length === 1 && (
           <>
-            <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 28, color: "#54432B", textAlign: "center" }} className="mb-3">
-              {cfg.menuHeading}
+            {(daily.length > 0 || schedules.length > 0) && <div style={{ borderTop: "2px solid #D7D2CB", marginTop: 40, marginBottom: 46 }} />}
+            <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, color: "#54432B", textAlign: "center" }} className="mb-3">
+              {uiText(`Título carta — ${restaurant}`, cfg.menuHeading)}
             </h2>
             <div className="flex flex-col gap-5">
               {Object.entries(
@@ -96,9 +102,10 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
                   return acc;
                 }, {})
               ).map(([sub, subItems]) => (
-                <div key={sub}>
-                  <h3 className="font-playfair font-bold text-[#54432B] text-[24px] leading-none text-center mb-3">{sub}</h3>
-                  <div className="bg-[#F3EDE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-2 flex flex-col divide-y divide-[#E8DDD0]">
+                /* Figma (Muffin Café): el título de la subcategoría va DENTRO de la card, a la izquierda */
+                <div key={sub} className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 pt-3.5 pb-2 flex flex-col">
+                  <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-1">{sub}</h3>
+                  <div className="flex flex-col divide-y divide-[#E8DDD0]">
                     {subItems.map(item => (
                       <div key={item.id} className="flex justify-between items-start gap-3 py-2.5">
                         <div className="flex-1">
@@ -118,8 +125,9 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
         {/* Varias cartas → accesos (Figma: Arboleda, La Grieta) */}
         {menuCats.length > 1 && (
           <>
-            <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 28, color: "#54432B", textAlign: "center" }} className="mb-3">
-              {cfg.menuHeading}
+            {(daily.length > 0 || schedules.length > 0) && <div style={{ borderTop: "2px solid #D7D2CB", marginTop: 40, marginBottom: 46 }} />}
+            <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, color: "#54432B", textAlign: "center" }} className="mb-3">
+              {uiText(`Título carta — ${restaurant}`, cfg.menuHeading)}
             </h2>
             <div className="flex flex-col gap-3">
               {menuCats.map(cat => (

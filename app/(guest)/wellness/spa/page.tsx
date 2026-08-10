@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import VolverButton from "@/components/VolverButton";
 import { ChevronRight } from "lucide-react";
 
 interface Schedule { venue: string; hours: string; }
@@ -52,14 +53,14 @@ export default function SpaPage() {
       <Header />
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: heroImg ? `url('${heroImg}')` : undefined }} />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>Spa Alunco</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <button onClick={() => router.back()} className="bg-[#1B4332] text-white text-[15px] font-medium px-6 py-1 rounded-full active:opacity-80"><i className="fi-rs-angle-left" style={{ fontSize: 11, marginRight: 6 }} />Volver</button>
+          <VolverButton />
         </div>
       </div>
 

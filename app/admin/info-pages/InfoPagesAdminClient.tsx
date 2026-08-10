@@ -10,10 +10,13 @@ interface Block {
 
 const BLOCK_TYPES = [
   { value: "text",  label: "Texto (título + contenido)" },
+  { value: "section", label: "Sección (título grande centrado + contenido)" },
   { value: "intro", label: "Introducción (párrafo suelto)" },
   { value: "list",  label: "Lista (una línea por ítem)" },
   { value: "price", label: "Precios (Nombre — $valor por línea)" },
   { value: "link",  label: "Enlace (contenido = ruta destino)" },
+  { value: "button", label: "Botón verde (título = texto, contenido = URL externa)" },
+  { value: "divider", label: "Filete divisor (línea horizontal)" },
   { value: "note",  label: "Nota al pie" },
 ];
 
