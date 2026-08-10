@@ -52,7 +52,7 @@ export default function SpaTratamientosPage() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all whitespace-nowrap ${activeCategory === cat ? "bg-[#215732] text-[#FFFBF3]" : "text-white/80 hover:text-white"}`}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[15px] transition-all whitespace-nowrap ${activeCategory === cat ? "bg-[#215732] text-[#FFFBF3] font-medium" : "text-white/80 hover:text-white font-normal"}`}
             >
               {cat}
             </button>

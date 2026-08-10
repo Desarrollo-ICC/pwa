@@ -72,7 +72,7 @@ export default function HabitacionPage() {
             <button
               key={t.key}
               onClick={() => scrollTo(t.key)}
-              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#215732] text-[#FFFBF3]" : "text-white/85 hover:text-white"}`}
+              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#215732] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
             >
               {t.label}
             </button>

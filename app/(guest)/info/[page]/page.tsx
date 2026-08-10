@@ -156,7 +156,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
               <button
                 key={b.id}
                 onClick={() => { setActiveSec(b.id); document.getElementById(anchorId(b))?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
-                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all ${activeSec === b.id ? "bg-[#215732] text-[#FFFBF3]" : "text-white/85 hover:text-white"}`}
+                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] whitespace-nowrap transition-all ${activeSec === b.id ? "bg-[#215732] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
               >
                 {b.title}
               </button>
@@ -263,7 +263,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
   // Lead paragraph
   if (b.block === "intro") {
     return (
-      <p className="text-[#3D2B1F] text-[15px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
+      <p className="text-[#3D2B1F] text-[16px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
         {b.content}
       </p>
     );
@@ -272,7 +272,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
   // Small print
   if (b.block === "note") {
     return (
-      <p className="text-[#9B9280] text-[13px] leading-relaxed whitespace-pre-line italic">{b.content}</p>
+      <p className="text-[#9B9280] text-[15px] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{b.content}</p>
     );
   }
 
@@ -286,8 +286,8 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
             const [name, price] = l.split(/\s+—\s+/);
             return (
               <div key={i} className="flex justify-between items-center py-1.5">
-                <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#54432B" }}>{name}</span>
-                {price && <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#DBA33B" }}>{price}</span>}
+                <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#54432B" }}>{name}</span>
+                {price && <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#DBA33B" }}>{price}</span>}
               </div>
             );
           })}
@@ -300,7 +300,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
   if (b.block === "list") {
     return (
       <div>
-        {b.title && <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-2">{b.title}</h3>}
+        {b.title && !b.title.endsWith("— Pasos") && <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-2">{b.title}</h3>}
         <ul className="flex flex-col gap-2.5">
           {lines.map((l, i) => {
             const step = l.match(/^(.+?·.+?)\s+—\s+(.+)$/);

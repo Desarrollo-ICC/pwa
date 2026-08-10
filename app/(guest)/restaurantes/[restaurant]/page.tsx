@@ -102,10 +102,10 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
                     {subItems.map(item => (
                       <div key={item.id} className="flex justify-between items-start gap-3 py-2.5">
                         <div className="flex-1">
-                          <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 14, color: "#54432B" }}>{item.name}</p>
+                          <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#54432B" }}>{item.name}</p>
                           {item.description && <p className="text-[#9B9280] text-[12px] mt-0.5">{item.description}</p>}
                         </div>
-                        {item.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 14, lineHeight: 1.5, color: "#DBA33B" }}>{item.price}</span>}
+                        {item.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 15, lineHeight: 1.5, color: "#DBA33B" }}>{item.price}</span>}
                       </div>
                     ))}
                   </div>

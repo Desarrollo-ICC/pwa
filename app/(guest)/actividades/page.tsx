@@ -109,7 +109,7 @@ function ActivityCard({ activity, catImage }: { activity: Activity; catImage: st
                 <span className="w-6 h-6 rounded-full bg-[#1B4332]/10 flex items-center justify-center shrink-0">
                   <i className={`${bulletIcon(b)} text-[#DBA33B]`} style={{ fontSize: 11 }} />
                 </span>
-                <span className="text-[#3D3D3D] text-[13px] leading-snug">{b}</span>
+                <span className="text-[#3D3D3D] text-[15px] leading-snug" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{b}</span>
               </li>
             ))}
           </ul>

@@ -46,7 +46,7 @@ export default function RestaurantCategoryPage({ params }: { params: Promise<{ r
               <button
                 key={sub}
                 onClick={() => { setActiveSub(sub); document.getElementById(`sub-${slugifyCat(sub)}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
-                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all ${activeSub === sub ? "bg-[#215732] text-[#FFFBF3]" : "text-white/85 hover:text-white"}`}
+                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] whitespace-nowrap transition-all ${activeSub === sub ? "bg-[#215732] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
               >
                 {sub}
               </button>
@@ -81,11 +81,11 @@ export default function RestaurantCategoryPage({ params }: { params: Promise<{ r
               {subItems.map(item => (
                 <div key={item.id} className="flex justify-between items-start gap-3 py-2.5">
                   <div className="flex-1">
-                    <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 14, color: "#54432B" }}>{item.name}</p>
+                    <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#54432B" }}>{item.name}</p>
                     {item.description && <p className="text-[#9B9280] text-[12px] mt-0.5">{item.description}</p>}
                   </div>
                   {item.price && (
-                    <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 14, lineHeight: 1.5, color: "#DBA33B" }}>{item.price}</span>
+                    <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 15, lineHeight: 1.5, color: "#DBA33B" }}>{item.price}</span>
                   )}
                 </div>
               ))}

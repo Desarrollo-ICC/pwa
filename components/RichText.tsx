@@ -58,7 +58,7 @@ export default function RichText({ text, className }: { text: string; className?
   }
 
   return (
-    <div className={className ?? "text-[#3D2B1F] text-[14px] leading-relaxed"} style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
+    <div className={className ?? "text-[#3D2B1F] text-[15px] leading-relaxed"} style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>
       {out}
     </div>
   );
