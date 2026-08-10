@@ -34,7 +34,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function HabitacionPage() {
   const router = useRouter();
   const [info, setInfo] = useState<InfoItem[]>([]);
-  const [heroImg, setHeroImg] = useState("/images/habitacion.jpg");
+  const [heroImg, setHeroImg] = useState<string | null>(null);
   const [active, setActive] = useState("housekeeping");
   const [openLav, setOpenLav] = useState<string | null>("Lavandería - Hombre");
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -44,8 +44,8 @@ export default function HabitacionPage() {
       const items: InfoItem[] = d.info ?? [];
       setInfo(items);
       const hero = items.find(i => i.section === "hero_image");
-      if (hero?.content) setHeroImg(hero.content);
-    });
+      setHeroImg(hero?.content ?? "/images/habitacion.jpg");
+    }).catch(() => setHeroImg("/images/habitacion.jpg"));
   }, []);
 
   const rowsBySection = useMemo(() => {
@@ -81,8 +81,8 @@ export default function HabitacionPage() {
       </div>
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-        <img src={heroImg} alt="Habitación" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+        {heroImg && <img src={heroImg} alt="Habitación" className="absolute inset-0 w-full h-full object-cover" />}
         <div className="absolute inset-0 bg-black/35" />
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>Habitación</h1>

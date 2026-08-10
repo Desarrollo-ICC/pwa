@@ -24,7 +24,7 @@ const VENUE_LABEL: Record<string, string> = {
 export default function SpaPage() {
   const router = useRouter();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [heroImg, setHeroImg] = useState("/images/spa.jpg");
+  const [heroImg, setHeroImg] = useState<string | null>(null);
   const [links, setLinks] = useState(DEFAULT_LINKS);
   const [nota, setNota] = useState("Para agendar, llama al 3544 desde tu habitación o acércate a la recepción del Spa.");
 
@@ -43,8 +43,8 @@ export default function SpaPage() {
       .catch(() => {});
     fetch("/api/familia").then(r => r.json()).then(d => {
       const hero = (d.programs ?? []).find((p: { type: string; image: string | null }) => p.type === "hero_spa");
-      if (hero?.image) setHeroImg(hero.image);
-    });
+      setHeroImg(hero?.image ?? "/images/spa.jpg");
+    }).catch(() => setHeroImg("/images/spa.jpg"));
   }, []);
 
   return (
@@ -52,8 +52,8 @@ export default function SpaPage() {
       <Header />
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${heroImg}')` }} />
+      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: heroImg ? `url('${heroImg}')` : undefined }} />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>Spa Alunco</h1>

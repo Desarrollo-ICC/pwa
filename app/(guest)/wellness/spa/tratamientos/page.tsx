@@ -14,7 +14,7 @@ export default function SpaTratamientosPage() {
   const [activeCategory, setActiveCategory] = useState("");
   const [services, setServices] = useState<SpaService[]>([]);
   const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [heroImg, setHeroImg] = useState("/images/spa.jpg");
+  const [heroImg, setHeroImg] = useState<string | null>(null);
   const [reglamento, setReglamento] = useState("");
   const [reglamentoOpen, setReglamentoOpen] = useState(false);
 
@@ -35,8 +35,8 @@ export default function SpaTratamientosPage() {
     fetch("/api/spa/schedules").then(r => r.json()).then(d => setSchedules(d.schedules ?? []));
     fetch("/api/familia").then(r => r.json()).then(d => {
       const hero = (d.programs ?? []).find((p: { type: string; image: string | null }) => p.type === "hero_spa");
-      if (hero?.image) setHeroImg(hero.image);
-    });
+      setHeroImg(hero?.image ?? "/images/spa.jpg");
+    }).catch(() => setHeroImg("/images/spa.jpg"));
   }, []);
 
   const filtered = services.filter(s => s.category === activeCategory);
@@ -61,10 +61,10 @@ export default function SpaTratamientosPage() {
       </div>
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${heroImg}')` }}
+          style={{ backgroundImage: heroImg ? `url('${heroImg}')` : undefined }}
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">

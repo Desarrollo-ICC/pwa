@@ -9,22 +9,22 @@ interface GymClass { id: number; name: string; description: string | null; price
 export default function GimnasioPage() {
   const router = useRouter();
   const [classes, setClasses] = useState<GymClass[]>([]);
-  const [heroImg, setHeroImg] = useState("/images/gimnasio.jpg");
+  const [heroImg, setHeroImg] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/gym/classes").then(r => r.json()).then(d => setClasses(d.classes ?? []));
     fetch("/api/familia").then(r => r.json()).then(d => {
       const hero = (d.programs ?? []).find((p: { type: string; image: string | null }) => p.type === "hero_gimnasio");
-      if (hero?.image) setHeroImg(hero.image);
-    });
+      setHeroImg(hero?.image ?? "/images/gimnasio.jpg");
+    }).catch(() => setHeroImg("/images/gimnasio.jpg"));
   }, []);
 
   return (
     <div className="min-h-svh bg-[#FFFBF3]">
       <Header />
       <div>
-        <div className="relative overflow-hidden shadow-lg" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${heroImg}')` }} />
+        <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 378, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: heroImg ? `url('${heroImg}')` : undefined }} />
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-0 flex items-center justify-center">
             <h1 className="font-playfair text-white font-bold text-center drop-shadow-lg" style={{ fontSize: 40, lineHeight: 1 }}>Gimnasio</h1>
