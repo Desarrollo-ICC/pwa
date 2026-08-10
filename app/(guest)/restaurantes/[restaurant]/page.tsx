@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
+import HeroImage from "@/components/HeroImage";
 import { useUiTexts } from "@/components/useUiTexts";
 import { ChevronRight } from "lucide-react";
 import { RESTAURANTS, slugifyCat } from "../config";
@@ -37,7 +38,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
 
       {/* Hero */}
       <div className="relative overflow-hidden shadow-lg" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-        <img src={cfg.image} alt={cfg.label} className="absolute inset-0 w-full h-full object-cover" />
+        <HeroImage src={cfg.image} alt={cfg.label} />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>{cfg.label}</h1>

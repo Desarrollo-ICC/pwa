@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
+import HeroImage from "@/components/HeroImage";
 import { useUiTexts } from "@/components/useUiTexts";
 
 interface Activity { id: number; season: string; category: string; name: string; price: string | null; }
@@ -37,8 +38,8 @@ export default function SkiRentalPage() {
       <Header />
 
       {/* Hero */}
-      <div className="relative overflow-hidden shadow-lg" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-        <img src="/images/fig-hero-ski-rental.jpg" alt="Ski Rental" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+        <HeroImage src="/images/fig-hero-ski-rental.jpg" alt="Ski Rental" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center px-6">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05 }}>{uiText("Título", "Ski Rental")}</h1>

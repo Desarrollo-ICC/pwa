@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
+import HeroImage from "@/components/HeroImage";
 import { useUiTexts } from "@/components/useUiTexts";
 
 interface SpaService { id: number; category: string; name: string; description: string | null; duration: string | null; price: string | null; }
@@ -65,10 +66,7 @@ export default function SpaTratamientosPage() {
 
       {/* Hero */}
       <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: heroImg ? `url('${heroImg}')` : undefined }}
-        />
+        <HeroImage src={heroImg} alt="Menú de Tratamientos" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05, maxWidth: 340 }}>{uiText("Título", "Menú de Tratamientos")}</h1>

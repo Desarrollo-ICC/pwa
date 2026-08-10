@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
+import HeroImage from "@/components/HeroImage";
 import { ChevronRight } from "lucide-react";
 import RichText from "@/components/RichText";
 
@@ -81,7 +82,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
       <div className="min-h-svh bg-[#FFFBF3]">
         <Header />
         <div className="relative overflow-hidden shadow-lg bg-[#22382D]" style={{ height: 293, borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-          {!loading && <img src={heroImg} alt={pageTitle} className="absolute inset-0 w-full h-full object-cover" />}
+          {!loading && <HeroImage src={heroImg} alt={pageTitle} />}
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-0 flex items-center justify-center px-6">
             <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05, maxWidth: 340 }}>{pageTitle}</h1>
@@ -174,7 +175,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
           background: isEmergency ? "linear-gradient(119.4deg, #AF4E2B 8.15%, #DB7C59 54.08%, #AF4E2B 100%)" : undefined,
         }}
       >
-        {!isEmergency && !loading && <img src={heroImg} alt={pageTitle} className="absolute inset-0 w-full h-full object-cover" />}
+        {!isEmergency && !loading && <HeroImage src={heroImg} alt={pageTitle} />}
         {!isEmergency && <div className="absolute inset-0 bg-black/40" />}
         <div className="absolute inset-0 flex items-center justify-center px-6">
           <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1.05, maxWidth: 340 }}>
