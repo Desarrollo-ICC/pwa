@@ -17,10 +17,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
+        // Email insensible a mayúsculas y sin espacios accidentales
+        // (los teclados móviles capitalizan la primera letra)
+        const email = (credentials.email as string).trim().toLowerCase();
+
         const [admin] = await db
           .select()
           .from(admins)
-          .where(eq(admins.email, credentials.email as string))
+          .where(eq(admins.email, email))
           .limit(1);
 
         if (!admin) return null;
