@@ -10,9 +10,9 @@
 */
 @font-face {
     font-family: "uicons-thin-straight";
-    src: url("/uicons/webfonts/uicons-thin-straight.woff2") format("woff2"),
-    url("/uicons/webfonts/uicons-thin-straight.woff") format("woff"),
-    url("/uicons/webfonts/uicons-thin-straight.eot#iefix") format("embedded-opentype");
+    src: url("/uicons/webfonts/uicons-thin-straight.woff2?v=3") format("woff2"),
+    url("/uicons/webfonts/uicons-thin-straight.woff?v=3") format("woff"),
+    url("/uicons/webfonts/uicons-thin-straight.eot?v=3#iefix") format("embedded-opentype");
     font-display: swap;
 }
     i[class^="fi-ts-"]:before, i[class*=" fi-ts-"]:before, span[class^="fi-ts-"]:before, span[class*="fi-ts-"]:before {

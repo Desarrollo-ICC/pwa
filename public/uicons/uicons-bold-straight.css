@@ -10,9 +10,9 @@
 */
 @font-face {
     font-family: "uicons-bold-straight";
-    src: url("/uicons/webfonts/uicons-bold-straight.woff2") format("woff2"),
-    url("/uicons/webfonts/uicons-bold-straight.woff") format("woff"),
-    url("/uicons/webfonts/uicons-bold-straight.eot#iefix") format("embedded-opentype");
+    src: url("/uicons/webfonts/uicons-bold-straight.woff2?v=3") format("woff2"),
+    url("/uicons/webfonts/uicons-bold-straight.woff?v=3") format("woff"),
+    url("/uicons/webfonts/uicons-bold-straight.eot?v=3#iefix") format("embedded-opentype");
     font-display: swap;
 }
     i[class^="fi-bs-"]:before, i[class*=" fi-bs-"]:before, span[class^="fi-bs-"]:before, span[class*="fi-bs-"]:before {
