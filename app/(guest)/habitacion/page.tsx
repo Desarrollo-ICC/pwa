@@ -79,7 +79,7 @@ export default function HabitacionPage() {
               onClick={() => scrollTo(t.key)}
               className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[15px] transition-all whitespace-nowrap text-center leading-tight ${active === t.key ? "bg-[#0E371B] text-[#FFFBF3] font-medium" : "text-white/85 hover:text-white font-normal"}`}
             >
-              {t.label}
+              {uiText(`Sección — ${t.key}`, t.label)}
             </button>
           ))}
         </div>
@@ -108,7 +108,7 @@ export default function HabitacionPage() {
           >
             <SectionBody
               secKey={sec.key}
-              label={sec.label}
+              label={uiText(`Sección — ${sec.key}`, sec.label)}
               rows={rowsBySection[sec.key] ?? []}
               openLav={openLav}
               setOpenLav={setOpenLav}

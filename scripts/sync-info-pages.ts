@@ -305,18 +305,26 @@ text('Traslado', 'El traslado terrestre y/o aéreo incluido en los paquetes tur�
 // ══ TEXTOS DE INTERFAZ (editables desde el admin) ══
 // Índice Bienestar
 P('ui-bienestar', 'Bienestar (tarjetas del índice)');
+text('Título', 'Bienestar');
 B('link', 'Spa Alunco', '/wellness/spa');
 B('link', 'Gimnasio', '/wellness/gimnasio');
 rows.push({ page, pageTitle, block: 'link', title: 'Piscinas', content: '/info/piscinas', image: '/images/fig-hero-piscinas.jpg', active: true, order: ++ord });
 
 // Índice Comer y Beber
 P('ui-comer-y-beber', 'Comer y Beber (tarjetas del índice)');
+text('Título', 'Comer y Beber');
 B('link', 'Arboleda', '/restaurantes/arboleda');
 B('link', 'La Grieta', '/restaurantes/la-grieta');
 B('link', 'Muffin Café', '/restaurantes/muffin');
 
 // Textos de la pantalla Actividades
 P('ui-actividades', 'Actividades (textos de la pantalla)');
+text('Título', 'Experiencias y Actividades');
+text('Verano', 'Verano');
+text('Invierno', 'Invierno');
+text('Título Niños temporada', 'Actividades de Temporada');
+text('Título Niños clubs', 'Actividades');
+text('Nota recepción card', 'Para más información, acércate al mesón de recepción');
 text('Cuidado del Entorno', 'Nos comprometemos a mantener el bosque en su estado natural y te pedimos que nos acompañes en ese cuidado:');
 list('Cuidado del Entorno — puntos', [
   'Regresa siempre con tu basura al hotel.',
@@ -343,6 +351,11 @@ B('link', 'Bienestar', '/wellness');
 B('link', 'Experiencias y Actividades', '/actividades');
 B('link', 'Ski', '/info/ski');
 B('link', 'Información General', '/info/informacion-general');
+text('Título bienvenida', 'Encuentra toda la información\nque necesites aquí');
+text('Sin alertas', 'No hay Alertas');
+text('Título clima', 'Clima en Chillán');
+text('Título eventos', 'Próximos eventos');
+text('Título emergencia', 'Emergencia');
 text('Emergencia — intro', 'Si necesitas atención médica inmediata, comunícate con la recepción llamando desde tu habitación al:');
 text('Emergencia — teléfono interno', '3500');
 text('Emergencia — intro externa', 'Si te encuentras fuera del Hotel, llama al:');
@@ -380,6 +393,14 @@ main().catch((e) => {
   process.exit(1);
 });
 
+// ══ UI GLOBAL (textos compartidos) ══
+P('ui-global', 'Textos globales');
+text('Volver', 'Volver');
+
+P('ui-spa', 'Spa Alunco (textos)');
+text('Título', 'Spa Alunco');
+text('Título horarios', 'Horarios de Atención:');
+
 // ══ UI SKI RENTAL / GIMNASIO / TRATAMIENTOS / HABITACIÓN / RESTAURANTES (textos editables) ══
 P('ui-ski-rental', 'Ski Rental (textos)');
 text('Título', 'Ski Rental');
@@ -397,9 +418,20 @@ text('Título sección', 'Fitness y Clases');
 
 P('ui-tratamientos', 'Menú de Tratamientos (textos)');
 text('Título', 'Menú de Tratamientos');
+text('Título reglamento', 'Reglamento de Seguridad e Higiene');
 
 P('ui-habitacion', 'Habitación (textos)');
 text('Título', 'Habitación');
+text('Sección — lavanderia', 'Lavandería');
+text('Sección — caja', 'Caja de Seguridad');
+text('Sección — minibar', 'Minibar');
+text('Sección — room_service', 'Room Service');
+text('Sección — almohadas', 'Menú de Almohadas');
+text('Sección — climatizacion', 'Climatización');
+text('Sección — redes', 'Redes y Contraseñas');
+text('Sección — tv', 'TV');
+text('Sección — guarda_maletas', 'Guarda Maletas');
+text('Sección — hidratacion', 'Punto de Hidratación');
 
 P('ui-restaurantes', 'Restaurantes (textos)');
 text('Título horarios', 'Horarios de Atención:');
@@ -414,5 +446,6 @@ text('Intro', 'Ski con más de 35 km de pistas y opciones para todos los niveles
 text('Nota mesón', 'Conoce las actividades disponibles consultando en el mesón de experiencias.');
 text('Reporte texto', 'Reporte de Andariveles y Pistas');
 text('Reporte URL', 'https://www.nevadosdechillan.com/reporte-montana');
+text('Título clima', 'Clima en Chillán');
 
 

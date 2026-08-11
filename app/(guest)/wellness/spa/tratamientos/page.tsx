@@ -93,7 +93,7 @@ export default function SpaTratamientosPage() {
               onClick={() => setReglamentoOpen(o => !o)}
               className="w-full flex items-center justify-between px-4 py-3 text-left"
             >
-              <span className="font-playfair font-bold text-[#3D2B1F] text-[18px]">Reglamento de Seguridad e Higiene</span>
+              <span className="font-playfair font-bold text-[#3D2B1F] text-[18px]">{uiText("Título reglamento", "Reglamento de Seguridad e Higiene")}</span>
               <i className={`fi-rs-angle-${reglamentoOpen ? "up" : "down"} text-[#3D2B1F]`} style={{ fontSize: 14 }} />
             </button>
             {reglamentoOpen && (

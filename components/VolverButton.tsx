@@ -1,10 +1,30 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+// Texto editable desde el admin (Páginas de Información → ui-global, bloque "Volver").
+// Caché de módulo: se consulta una sola vez por sesión.
+let volverCache: string | null = null;
 
 // Botón "Volver" (Figma: componente "Botón Volver", 117×32,
 // gradiente #215732 → #47835A → #215732, texto Cooper Hewitt Medium 20 #FFFBF3)
 export default function VolverButton({ white = false, className, onClick }: { white?: boolean; className?: string; onClick?: () => void }) {
   const router = useRouter();
+  const [label, setLabel] = useState(volverCache ?? "Volver");
+
+  useEffect(() => {
+    if (volverCache !== null) return;
+    fetch("/api/info-pages?page=ui-global")
+      .then(r => r.json())
+      .then(d => {
+        const b = (d.blocks ?? []).find((x: { title: string | null }) => x.title === "Volver");
+        const v = b?.content || "Volver";
+        volverCache = v;
+        setLabel(v);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <button
       onClick={onClick ?? (() => router.back())}
@@ -23,7 +43,7 @@ export default function VolverButton({ white = false, className, onClick }: { wh
       }}
     >
       <i className="fi-rs-angle-left" style={{ fontSize: 12, marginRight: 8 }} />
-      Volver
+      {label}
     </button>
   );
 }

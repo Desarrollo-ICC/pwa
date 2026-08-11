@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import { useUiTexts } from "@/components/useUiTexts";
 
 const DEFAULT_RESTAURANTS = [
   { key: "arboleda",  href: "/restaurantes/arboleda",  label: "Arboleda",    desc: "Restaurante principal · Vinos & Fine Dining", defaultImg: "/images/arboleda.jpg" },
@@ -12,6 +13,7 @@ const DEFAULT_RESTAURANTS = [
 type Card = { key: string; href: string; label: string; desc: string; defaultImg: string };
 
 export default function RestaurantesPage() {
+  const uiText = useUiTexts("ui-comer-y-beber");
   const [imgs, setImgs] = useState<Record<string, string>>({});
   const [RESTAURANTS, setRestaurants] = useState<Card[]>(DEFAULT_RESTAURANTS);
 
@@ -52,7 +54,7 @@ export default function RestaurantesPage() {
       <div className="pt-16 pb-24 md:pb-12">
         <div className="px-5 py-6 md:max-w-3xl md:mx-auto overflow-hidden">
           <h1 className="font-playfair font-bold text-center mb-6" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>
-            Comer y Beber
+            {uiText("Título", "Comer y Beber")}
           </h1>
           <div className="flex flex-col items-center md:flex-row md:justify-center md:flex-wrap" style={{ gap: 46 }}>
             {RESTAURANTS.map((r) => (

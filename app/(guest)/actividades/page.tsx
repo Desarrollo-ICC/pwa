@@ -83,7 +83,7 @@ function bulletIcon(text: string): string {
   return "fi-ts-check-circle";
 }
 
-function ActivityCard({ activity, catImage }: { activity: Activity; catImage: string }) {
+function ActivityCard({ activity, catImage, notaRecepcion = "Para más información, acércate al mesón de recepción" }: { activity: Activity; catImage: string; notaRecepcion?: string }) {
   const bullets = extractBullets(activity.description);
   const imgSrc = activity.image ?? catImage;
 
@@ -118,7 +118,7 @@ function ActivityCard({ activity, catImage }: { activity: Activity; catImage: st
         )}
         <div className="mt-3 pt-2.5 flex items-center gap-2 text-[#9B9280] text-[11px]" style={{ borderTop: "1px solid #E8DDD0" }}>
           <i className="fi-ts-info" style={{ fontSize: 12 }} />
-          <span>Para más información, acércate al mesón de recepción</span>
+          <span>{notaRecepcion}</span>
         </div>
       </div>
     </div>
@@ -216,7 +216,7 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
           <div className="rounded-3xl px-5 py-4" style={{ background: "linear-gradient(135deg, #215732 0%, #47835A 100%)", borderRadius: 24 }}>
             <div className="flex items-start justify-between">
               <div>
-                <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#86BA86" }} className="mb-0.5">Clima en Chillán</p>
+                <p style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 14, color: "#86BA86" }} className="mb-0.5">{csText("Título clima", "Clima en Chillán")}</p>
                 <p className="leading-none" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 48, color: "#FFFBF3" }}>
                   {weather.temp}<span style={{ fontSize: 24, fontWeight: 400 }}>°c</span>
                 </p>
@@ -263,7 +263,7 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
   );
 }
 
-function ActivitySlider({ activities, catImage }: { activities: Activity[]; catImage: string }) {
+function ActivitySlider({ activities, catImage, notaRecepcion }: { activities: Activity[]; catImage: string; notaRecepcion?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   function scroll(dir: "left" | "right") {
@@ -417,14 +417,14 @@ export default function ActividadesPage() {
                     color: season === s ? "#FFFBF3" : "#54432B",
                   }}
                 >
-                  {s === "verano" ? "Verano" : "Invierno"}
+                  {s === "verano" ? uiText("Verano", "Verano") : uiText("Invierno", "Invierno")}
                 </button>
               ))}
             </div>
           </div>
           <div className="px-5 py-6 md:max-w-3xl md:mx-auto">
             <h1 className="font-playfair font-bold text-center mb-6" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>
-              Experiencias y Actividades
+              {uiText("Título", "Experiencias y Actividades")}
             </h1>
             {allCategories.length === 0 && activities.length === 0 && (
               <p className="text-[#9B9280] text-center py-10 text-[14px]">Cargando actividades…</p>
@@ -515,7 +515,7 @@ export default function ActividadesPage() {
                           <p className="text-[#9B9280] text-[12px]">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
                         </div>
                       </div>
-                      <ActivitySlider activities={freeActs} catImage={getCatImg(selectedCat)} />
+                      <ActivitySlider activities={freeActs} catImage={getCatImg(selectedCat)} notaRecepcion={uiText("Nota recepción card", "Para más información, acércate al mesón de recepción")} />
                     </>
                   )}
                   {paidActs.length > 0 && (
@@ -530,7 +530,7 @@ export default function ActividadesPage() {
                           <p className="text-[#9B9280] text-[12px]">{uiText("Nota mesón", "Conoce las actividades disponibles consultando en el mesón de experiencias.")}</p>
                         </div>
                       </div>
-                      <ActivitySlider activities={paidActs} catImage={getCatImg(selectedCat)} />
+                      <ActivitySlider activities={paidActs} catImage={getCatImg(selectedCat)} notaRecepcion={uiText("Nota recepción card", "Para más información, acércate al mesón de recepción")} />
                     </>
                   )}
                 </>
@@ -538,19 +538,19 @@ export default function ActividadesPage() {
                 <>
                   {catActivities.length > 0 && (
                     <>
-                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 32, lineHeight: 1, color: '#54432B' }}>Actividades de Temporada</h3>
-                      <ActivitySlider activities={catActivities} catImage={getCatImg(selectedCat)} />
+                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 32, lineHeight: 1, color: '#54432B' }}>{uiText("Título Niños temporada", "Actividades de Temporada")}</h3>
+                      <ActivitySlider activities={catActivities} catImage={getCatImg(selectedCat)} notaRecepcion={uiText("Nota recepción card", "Para más información, acércate al mesón de recepción")} />
                     </>
                   )}
                   {clubs.length > 0 && (
                     <>
-                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 32, lineHeight: 1, color: '#54432B' }}>Actividades</h3>
-                      <ActivitySlider activities={clubs} catImage={getCatImg(selectedCat)} />
+                      <h3 className="font-playfair font-bold text-center px-4 mt-4 mb-1" style={{ fontSize: 32, lineHeight: 1, color: '#54432B' }}>{uiText("Título Niños clubs", "Actividades")}</h3>
+                      <ActivitySlider activities={clubs} catImage={getCatImg(selectedCat)} notaRecepcion={uiText("Nota recepción card", "Para más información, acércate al mesón de recepción")} />
                     </>
                   )}
                 </>
               ) : (
-                <ActivitySlider activities={catActivities} catImage={getCatImg(selectedCat)} />
+                <ActivitySlider activities={catActivities} catImage={getCatImg(selectedCat)} notaRecepcion={uiText("Nota recepción card", "Para más información, acércate al mesón de recepción")} />
               )}
             </div>
 

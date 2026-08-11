@@ -227,7 +227,7 @@ export default function HomePage() {
       <div className="mt-6 pb-24 md:pb-12">
         <div className="px-4 md:max-w-5xl md:mx-auto">
           <p className="font-playfair text-[#3D2B1F] text-[32px] md:text-[36px] font-bold text-center mb-5">
-            Encuentra toda la información<br />que necesites aquí
+            {(ui["Título bienvenida"] ?? "Encuentra toda la información\nque necesites aquí").split("\n").map((l, i, arr) => (<span key={i}>{l}{i < arr.length - 1 && <br />}</span>))}
           </p>
 
           {/* Quick links grid — 5 items, 3+2 on mobile, all in one row on desktop */}
@@ -264,7 +264,7 @@ export default function HomePage() {
             ) : (
               <div className="bg-[#F3ECE4] rounded-2xl px-4 flex items-center gap-3" style={{ height: 70 }}>
                 <i className="fi-ts-bell" style={{ fontSize: 18, color: "#DB7C59" }} />
-                <p className="text-[15px] font-medium" style={{ color: "#DB7C59", fontFamily: "'Cooper Hewitt', sans-serif" }}>No hay Alertas</p>
+                <p className="text-[15px] font-medium" style={{ color: "#DB7C59", fontFamily: "'Cooper Hewitt', sans-serif" }}>{ui["Sin alertas"] ?? "No hay Alertas"}</p>
               </div>
             )}
           </div>
@@ -306,7 +306,7 @@ export default function HomePage() {
             <div className="rounded-2xl px-4 py-4 md:flex-1" style={{ background: "linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%)" }}>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-white/70 text-[11px] mb-0.5">Clima en Chillán</p>
+                  <p className="text-white/70 text-[11px] mb-0.5">{ui["Título clima"] ?? "Clima en Chillán"}</p>
                   <p className="text-white leading-none" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 48, lineHeight: 1 }}>{weather.temp}<span style={{ fontSize: 24, fontWeight: 400 }}>°C</span></p>
                 </div>
                 <i className={`${weatherIcon(weather.code)} text-white`} style={{ fontSize: 34 }} />
@@ -326,7 +326,7 @@ export default function HomePage() {
           {/* Próximos eventos */}
           <div>
             <p className="text-[#3D2B1F] text-center mb-4" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, lineHeight: 1 }}>
-              Próximos eventos
+              {ui["Título eventos"] ?? "Próximos eventos"}
             </p>
             <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-4">
               {upcomingEvents.length === 0 && (
@@ -360,7 +360,7 @@ export default function HomePage() {
           <div>
             <div className="bg-[#F3ECE4] rounded-2xl p-6 text-center">
               <h2 className="font-playfair text-[20px] font-bold text-[#54432B] mb-3 underline underline-offset-8" style={{ textDecorationColor: "#DB7C59", textDecorationThickness: 1 }}>
-                Emergencia
+                {ui["Título emergencia"] ?? "Emergencia"}
               </h2>
               <p className="text-[#4A4A4A] text-[13px] leading-relaxed mb-4">
                 {ui["Emergencia — intro"] ?? "Si necesitas atención médica inmediata, comunícate con la recepción llamando al:"}

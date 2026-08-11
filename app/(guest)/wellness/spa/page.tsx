@@ -5,6 +5,7 @@ import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import VolverButton from "@/components/VolverButton";
 import HeroImage from "@/components/HeroImage";
+import { useUiTexts } from "@/components/useUiTexts";
 import { ChevronRight } from "lucide-react";
 
 interface Schedule { venue: string; hours: string; }
@@ -25,6 +26,7 @@ const VENUE_LABEL: Record<string, string> = {
 export default function SpaPage() {
   const router = useRouter();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const uiText = useUiTexts("ui-spa");
   const [heroImg, setHeroImg] = useState<string | null>(null);
   const [links, setLinks] = useState(DEFAULT_LINKS);
   const [nota, setNota] = useState("Para agendar, llama al 3544 desde tu habitación o acércate a la recepción del Spa.");
@@ -56,7 +58,7 @@ export default function SpaPage() {
         <HeroImage src={heroImg} alt="Spa Alunco" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>Spa Alunco</h1>
+          <h1 className="text-white font-bold text-center drop-shadow-lg" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontSize: 40, lineHeight: 1 }}>{uiText("Título", "Spa Alunco")}</h1>
         </div>
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
           <VolverButton />
@@ -68,7 +70,7 @@ export default function SpaPage() {
         {schedules.length > 0 && (
           <div className="mb-5">
             <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-2">
-              Horarios de Atención:
+              {uiText("Título horarios", "Horarios de Atención:")}
             </h2>
             {schedules.map((s, i) => (
               <p key={`${s.venue}-${i}`} className="text-[14px] text-[#3D2B1F] leading-relaxed">

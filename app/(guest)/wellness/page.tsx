@@ -25,10 +25,13 @@ const DEFAULT_SECTIONS = [
   },
 ];
 
+import { useUiTexts } from "@/components/useUiTexts";
+
 type Section = { href: string; label: string; image: string; desc: string };
 
 export default function WellnessPage() {
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
+  const uiText = useUiTexts("ui-bienestar");
 
   // Tarjetas editables desde el admin (Páginas de Información → ui-bienestar)
   useEffect(() => {
@@ -52,7 +55,7 @@ export default function WellnessPage() {
       <div className="pt-16 page-pb">
         <div className="px-5 py-6">
           <h1 className="font-playfair font-bold text-center mb-6" style={{ fontSize: 40, lineHeight: 1, color: '#54432B' }}>
-            Bienestar
+            {uiText("Título", "Bienestar")}
           </h1>
           <div className="flex flex-col items-center" style={{ gap: 46 }}>
             {sections.map((s) => (
