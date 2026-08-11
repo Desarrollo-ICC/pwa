@@ -45,9 +45,9 @@ export default function RootLayout({
   return (
     <html lang="es" className={poltawski.variable}>
       <head>
-        <link rel="stylesheet" href="/uicons/uicons-thin-straight.css" />
-        <link rel="stylesheet" href="/uicons/uicons-regular-straight.css" />
-        <link rel="stylesheet" href="/uicons/uicons-bold-straight.css" />
+        <link rel="stylesheet" href="/uicons/uicons-thin-straight.css?v=3" />
+        <link rel="stylesheet" href="/uicons/uicons-regular-straight.css?v=3" />
+        <link rel="stylesheet" href="/uicons/uicons-bold-straight.css?v=3" />
       </head>
       <body className="antialiased">
         <InstallPrompt />

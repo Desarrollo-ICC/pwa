@@ -141,6 +141,21 @@ export const events = pgTable("events", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Generic information pages (Circuitos, Sala de Yoga, Piscinas, Mi Estadía, Programa del
+// Viajero, Estacionamientos, Tiendas, etc.) — one row per content block within a page.
+export const infoPages = pgTable("info_pages", {
+  id: serial("id").primaryKey(),
+  page: varchar("page", { length: 100 }).notNull(), // slug, e.g. 'circuitos-hidrotermales'
+  pageTitle: varchar("page_title", { length: 255 }).notNull(), // display title / hero
+  block: varchar("block", { length: 50 }).notNull().default("text"), // 'text' | 'list' | 'price' | 'note' | 'intro'
+  title: varchar("title", { length: 255 }),
+  content: text("content"),
+  image: varchar("image", { length: 500 }),
+  active: boolean("active").notNull().default(true),
+  order: integer("order").notNull().default(0),
+  translations: jsonb("translations").$type<{ en?: { title?: string; content?: string }; pt?: { title?: string; content?: string } }>(),
+});
+
 // Activity logs — registry of all guest & admin actions
 export const activityLogs = pgTable("activity_logs", {
   id: serial("id").primaryKey(),

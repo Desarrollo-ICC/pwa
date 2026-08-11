@@ -4,9 +4,12 @@
     "room": "My Room",
     "restaurants": "Food & Drinks",
     "activities": "Experiences",
-    "wellness": "Wellness & Spa",
+    "wellness": "Wellness",
     "family": "Family & Kids",
-    "emergency": "Emergency Contact"
+    "emergency": "Emergencies",
+    "stay": "My Stay",
+    "ski": "Ski",
+    "info": "General Information"
   },
   "common": {
     "back": "Back",
@@ -47,7 +50,7 @@
     "disclaimer": "Activities are subject to availability and weather conditions."
   },
   "wellness": {
-    "title": "Wellness & Spa",
+    "title": "Wellness",
     "spa": "Spa Alunco",
     "gym": "Gym",
     "fitness": "Fitness & Classes",

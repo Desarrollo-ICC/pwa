@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { LayoutDashboard, Sparkles, UtensilsCrossed, Mountain, Baby, BedDouble, Bell, Users, LogOut, Activity, Menu, X, CalendarDays, Settings } from "lucide-react";
+import { LayoutDashboard, Sparkles, UtensilsCrossed, Mountain, Baby, BedDouble, Bell, Users, LogOut, Activity, Menu, X, CalendarDays, Settings, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
@@ -15,6 +15,7 @@ const NAV = [
   { href: "/admin/actividades", label: "Actividades", icon: Mountain, module: "actividades", superadminOnly: false },
   { href: "/admin/familia", label: "Familia y Niños", icon: Baby, module: "familia", superadminOnly: false },
   { href: "/admin/habitacion", label: "Mi Habitación", icon: BedDouble, module: "habitacion", superadminOnly: false },
+  { href: "/admin/info-pages", label: "Páginas de Información", icon: FileText, module: null, superadminOnly: false },
   { href: "/admin/usuarios", label: "Usuarios", icon: Users, module: null, superadminOnly: false },
   { href: "/admin/logs", label: "Registro de Actividad", icon: Activity, module: null, superadminOnly: true },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings, module: null, superadminOnly: true },

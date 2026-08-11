@@ -4,9 +4,12 @@
     "room": "Meu Quarto",
     "restaurants": "Comida e Bebidas",
     "activities": "Experiências",
-    "wellness": "Wellness & Spa",
+    "wellness": "Bem-estar",
     "family": "Família e Crianças",
-    "emergency": "Contato de Emergência"
+    "emergency": "Emergências",
+    "stay": "Minha Estadia",
+    "ski": "Ski",
+    "info": "Informações Gerais"
   },
   "common": {
     "back": "Voltar",
@@ -47,7 +50,7 @@
     "disclaimer": "As atividades estão sujeitas à disponibilidade e condições climáticas."
   },
   "wellness": {
-    "title": "Wellness & Spa",
+    "title": "Bem-estar",
     "spa": "Spa Alunco",
     "gym": "Academia",
     "fitness": "Fitness e Aulas",

@@ -3,17 +3,17 @@
 /* Flaticon Uicons – @font-face registrado en bundle principal */
 @font-face {
   font-family: "uicons-thin-straight";
-  src: url("/uicons/webfonts/uicons-thin-straight.woff2") format("woff2");
+  src: url("/uicons/webfonts/uicons-thin-straight.woff2?v=3") format("woff2");
   font-display: swap;
 }
 @font-face {
   font-family: "uicons-regular-straight";
-  src: url("/uicons/webfonts/uicons-regular-straight.woff2") format("woff2");
+  src: url("/uicons/webfonts/uicons-regular-straight.woff2?v=3") format("woff2");
   font-display: swap;
 }
 @font-face {
   font-family: "uicons-bold-straight";
-  src: url("/uicons/webfonts/uicons-bold-straight.woff2") format("woff2");
+  src: url("/uicons/webfonts/uicons-bold-straight.woff2?v=3") format("woff2");
   font-display: swap;
 }
 
@@ -75,20 +75,17 @@ span[class^="fi-bs-"]::before, span[class*=" fi-bs-"]::before {
   --font-inter: "Cooper Hewitt", system-ui, sans-serif;
 }
 
-/* ── Page transitions ── */
+/* ── Page transitions ──
+   Solo el contenido se anima (el Header está en el layout y queda estable).
+   fill-mode backwards: al terminar no se retiene ningún transform
+   (un transform retenido rompe position:fixed de los hijos). */
 @keyframes page-enter {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .page-transition {
-  animation: page-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-enter 250ms ease-out backwards;
 }
 
 /* Hero image fade-in */
@@ -123,15 +120,9 @@ span[class^="fi-bs-"]::before, span[class*=" fi-bs-"]::before {
 
 @layer base {
   html {
-    background-color: #1B4332;
-    background-image: url('/images/login-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-color: #F5F0E8;
     -webkit-tap-highlight-color: transparent;
     min-height: 100svh;
-    display: flex;
-    justify-content: center;
   }
 
   body {
@@ -140,10 +131,8 @@ span[class^="fi-bs-"]::before, span[class*=" fi-bs-"]::before {
     background-color: #F5F0E8;
     color: #1a1a1a;
     width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
+    margin: 0;
     min-height: 100svh;
-    box-shadow: 0 0 60px rgba(0,0,0,0.4);
   }
 
   /* Admin panel: full width, no mobile constraints */
