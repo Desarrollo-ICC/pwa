@@ -80,7 +80,7 @@ function bulletIcon(text: string): string {
   if (t.includes("pasajero") || t.includes("persona") || t.includes("guía") || t.includes("grupo")) return "fi-ts-person-simple";
   if (t.includes("costo") || t.includes("precio") || t.includes("adicional")) return "fi-ts-usd-circle";
   if (t.includes("reserva") || t.includes("recepción") || t.includes("anexo")) return "fi-ts-calendar";
-  return "fi-ts-check";
+  return "fi-ts-check-circle";
 }
 
 function ActivityCard({ activity, catImage }: { activity: Activity; catImage: string }) {
@@ -168,7 +168,7 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
     if (code <= 49) return "fi-ts-clouds";
     if (code <= 69) return "fi-ts-cloud-drizzle";
     if (code <= 79) return "fi-ts-cloud-snow";
-    if (code <= 99) return "fi-ts-cloud-bolt";
+    if (code <= 99) return "fi-ts-thunderstorm";
     return "fi-ts-sun";
   }
 
