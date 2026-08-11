@@ -310,14 +310,22 @@ export default function ActividadesPage() {
   const [season, setSeason] = useState<"verano" | "invierno">("verano");
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
+  // true si la categoría se abrió por deep link (?cat=) desde otra sección (p.ej. menú Ski):
+  // en ese caso "Volver" debe regresar a la página anterior, no a la lista de actividades.
+  const [openedFromLink, setOpenedFromLink] = useState(false);
   // Lee ?cat= sin useSearchParams (evita requerir un boundary de Suspense en el build)
   useEffect(() => {
     const cat = new URLSearchParams(window.location.search).get("cat");
     if (cat) {
       setSelectedCat(cat);
+      setOpenedFromLink(true);
       if (cat === "Centro de Ski" || cat.startsWith("SKI")) setSeason("invierno");
     }
   }, []);
+  const backFromCat = () => {
+    if (openedFromLink) window.history.back();
+    else setSelectedCat(null);
+  };
   const [catImgMap, setCatImgMap] = useState<Record<string, string>>({});
   const [clubs, setClubs] = useState<Activity[]>([]);
   // Textos editables desde el admin (Páginas de Información → ui-actividades)
@@ -426,7 +434,7 @@ export default function ActividadesPage() {
                 {allCategories.map((cat) => (
                   <button
                     key={cat}
-                    onClick={() => setSelectedCat(cat)}
+                    onClick={() => { setOpenedFromLink(false); setSelectedCat(cat); }}
                     className="relative w-full max-w-sm rounded-3xl overflow-hidden shadow-md active:scale-[0.98] transition-transform card-enter"
                     style={{ height: 114 }}
                   >
@@ -455,7 +463,7 @@ export default function ActividadesPage() {
           </div>
           </div>
         ) : selectedCat === "Centro de Ski" ? (
-          <CentroDeSkiView onBack={() => setSelectedCat(null)} skiActivities={activities.filter(a => a.season === "invierno" && a.category.startsWith("SKI –"))} />
+          <CentroDeSkiView onBack={backFromCat} skiActivities={activities.filter(a => a.season === "invierno" && a.category.startsWith("SKI –"))} />
         ) : (
           <div className="pb-24 md:pb-12">
             {/* Hero — full width */}
@@ -474,7 +482,7 @@ export default function ActividadesPage() {
               </div>
               {/* Volver button bottom center */}
               <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-                <VolverButton onClick={() => setSelectedCat(null)} />
+                <VolverButton onClick={backFromCat} />
               </div>
             </div>
 
