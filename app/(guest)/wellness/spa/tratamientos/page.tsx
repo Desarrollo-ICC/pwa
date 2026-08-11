@@ -48,7 +48,7 @@ export default function SpaTratamientosPage() {
     <div className="min-h-svh bg-[#FFFBF3]">
 
       {/* Barra Superior Wellness — bajo el header, sobre el hero (Figma) */}
-      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+      <div className="bg-[#215732] sticky top-[85px] md:top-[68px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {categories.map(cat => (
             <button
@@ -118,7 +118,7 @@ export default function SpaTratamientosPage() {
 // título Poltawski Bold 20, desc Cooper Hewitt 16, filete #D7D2CB, chevron #D7D2CB,
 // fila inferior: $ dorado + precio 15 café (izq) | reloj dorado + duración 15 café (der))
 function TreatmentCard({ service }: { service: SpaService }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   return (
     <div className="shadow-sm" style={{ backgroundColor: "#F3ECE4", borderRadius: 12, padding: "10px 16px 12px" }}>
       <button onClick={() => setOpen(o => !o)} className="w-full flex justify-between items-center gap-3">

@@ -18,7 +18,7 @@ const DEFAULT_QUICK_LINKS = [
   { href: "/wellness",                 label: "Bienestar",                  iconClass: "fi-ts-hot-tub" },
   { href: "/actividades",              label: "Experiencias y Actividades", iconClass: "fi-ts-mountain" },
   { href: "/info/ski",                 label: "Ski",                        iconClass: "fi-ts-skiing" },
-  { href: "/info/informacion-general", label: "Información General",        iconClass: "fi-rs-info" },
+  { href: "/info/informacion-general", label: "Información General",        iconClass: "fi-ts-information" },
 ];
 
 function weatherIcon(code: number): string {
@@ -82,7 +82,7 @@ function ActivityCard({ a }: { a: Activity }) {
             </div>
           )}
           <div className="flex items-center gap-1.5 text-[#9B9280]">
-            <i className="fi-rs-info shrink-0" style={{ fontSize: 12 }} />
+            <i className="fi-ts-information shrink-0" style={{ fontSize: 12 }} />
             <span className="text-[12px]">Para más información, acércate al mesón</span>
           </div>
         </div>
@@ -164,7 +164,7 @@ export default function HomePage() {
         const ls = rows.filter((b: { block: string }) => b.block === "link");
         if (ls.length) setQuickLinks(ls.map((b: { title: string; content: string }) => ({
           href: b.content, label: b.title,
-          iconClass: DEFAULT_QUICK_LINKS.find(q => q.href === b.content)?.iconClass ?? "fi-rs-info",
+          iconClass: DEFAULT_QUICK_LINKS.find(q => q.href === b.content)?.iconClass ?? "fi-ts-information",
         })));
         const m: Record<string, string> = {};
         for (const b of rows) if (b.title) m[b.title] = b.content ?? "";

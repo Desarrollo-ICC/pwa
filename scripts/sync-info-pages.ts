@@ -96,10 +96,10 @@ text('Uso de Llaves y Cerraduras', 'Contenido pendiente de definir.');
 
 // ══ INFORMACIÓN GENERAL (menu) ══
 P('informacion-general', 'Información General');
-link('Reglamento & Políticas del Hotel', '/info/reglamento');
-link('Tiendas', '/info/tiendas');
-link('Espacios', '/info/espacios');
-link('Políticas de Reserva', '/info/politicas-reserva');
+link('Reglamento & Políticas del Hotel', '/info/reglamento', '/images/fig-idx-reglamento.jpg');
+link('Tiendas', '/info/tiendas', '/images/fig-idx-tiendas.jpg');
+link('Espacios', '/info/espacios', '/images/fig-idx-espacios.jpg');
+link('Políticas de Reserva', '/info/politicas-reserva', '/images/fig-idx-politicas.jpg');
 
 // ══ TIENDAS (menu) ══
 P('tiendas', 'Tiendas');
@@ -409,31 +409,10 @@ text('Título carta — la-grieta', 'Menús');
 text('Título carta — muffin', 'Menús');
 
 // ══ UI CENTRO DE SKI (tablas editables; filas separadas por |) ══
-P('ui-centro-ski', 'Centro de Ski (tablas)');
+P('ui-centro-ski', 'Centro de Ski (textos)');
 text('Intro', 'Ski con más de 35 km de pistas y opciones para todos los niveles. Vive una experiencia en un entorno natural privilegiado.');
 text('Nota mesón', 'Conoce las actividades disponibles consultando en el mesón de experiencias.');
-text('Título andariveles', 'Reporte Andariveles');
-text('Título pistas', 'Pistas');
-list('Reporte Andariveles', [
-  'Tata | Silla Cuádruple | Zona Baja | Cerrado',
-  'Refugio | Silla Triple | Zona Baja | Abierto',
-]);
-list('Pistas', [
-  'Cóndor | Cerrado | Experto | Ninguna',
-  'Cóndor II | Abierto | Experto | Ninguna',
-  'Moto-X | Cerrado | Intermedio | Ninguna',
-  'Curvitas | Abierto | Intermedio | Ninguna',
-  'Novicios | Cerrado | Principiante | Ninguna',
-  'Súper-X | Abierto | Avanzado | Ninguna',
-  'Nacional | Cerrado | Avanzado | Ninguna',
-  'Bosque Zion | Abierto | Intermedio | Ninguna',
-  'Renegado | Cerrado | Avanzado | Ninguna',
-  'Águila | Abierto | Experto | Ninguna',
-  'Fumarolas – Sendero Enduro | Cerrado | Intermedio | Ninguna',
-  'Candado – Sendero Enduro | Abierto | Experto | Ninguna',
-  'Garganta – Sendero Enduro | Cerrado | Experto | Ninguna',
-  'Sendero E-Bike | Abierto | Principiante | Ninguna',
-  'Sendero Familiar | Cerrado | Principiante | Ninguna',
-]);
+text('Reporte texto', 'Reporte de Andariveles y Pistas');
+text('Reporte URL', 'https://www.nevadosdechillan.com/reporte-montana');
 
 

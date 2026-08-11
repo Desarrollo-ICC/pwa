@@ -152,7 +152,7 @@ export default function InfoPage({ params }: { params: Promise<{ page: string }>
     <div className="min-h-svh bg-[#FFFBF3]">
 
       {(navBlocks.length > 1 || (NAV_PAGES.has(page) && loading)) && (
-        <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+        <div className="bg-[#215732] sticky top-[85px] md:top-[68px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
           <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
             {navBlocks.map(b => (
               <button
@@ -304,24 +304,9 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
     );
   }
 
-  // Price table
+  // Price table — desplegable cerrado por defecto (Ajustes 11.08)
   if (b.block === "price") {
-    return (
-      <div className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-4">
-        {b.title && <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }} className="mb-2">{b.title}</h3>}
-        <div className="flex flex-col divide-y divide-[#E8DDD0]">
-          {lines.map((l, i) => {
-            const [name, price] = l.split(/\s+—\s+/);
-            return (
-              <div key={i} className="flex justify-between items-center py-2.5">
-                <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#54432B" }}>{name}</span>
-                {price && <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#DBA33B" }}>{price}</span>}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
+    return <PriceCard title={b.title} lines={lines} />;
   }
 
   // Bulleted list
@@ -334,7 +319,7 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
             const step = l.match(/^(.+?·.+?)\s+—\s+(.+)$/);
             if (step) {
               return (
-                <li key={i} className={i > 0 ? "pt-2.5" : ""} style={i > 0 ? { borderTop: "1px solid #EDE6D8" } : undefined}>
+                <li key={i} className={i > 0 ? "pt-2.5" : ""}>
                   <p className="font-bold text-[#3D2B1F] text-[14px]" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{step[1].replace(" · ", " | ")}</p>
                   <p className="text-[#6B6B6B] text-[13px] leading-relaxed" style={{ fontFamily: "'Cooper Hewitt', sans-serif" }}>{step[2]}</p>
                 </li>
@@ -410,6 +395,37 @@ function BlockView({ b, emergency }: { b: Block; emergency: boolean }) {
     <div>
       {b.title && <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, lineHeight: 1.15, color: "#54432B" }} className="mb-1.5">{b.title}</h3>}
       <RichText text={b.content ?? ""} />
+    </div>
+  );
+}
+
+// Card de precios desplegable (Ajustes 11.08: comienzan cerrados, muestran N productos)
+function PriceCard({ title, lines }: { title: string | null; lines: string[] }) {
+  const [open, setOpen] = useState(false);
+  const rows = (
+    <div className="flex flex-col divide-y divide-[#E8DDD0]">
+      {lines.map((l, i) => {
+        const [name, price] = l.split(/\s+—\s+/);
+        return (
+          <div key={i} className="flex justify-between items-center py-2.5">
+            <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#54432B" }}>{name}</span>
+            {price && <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 15, color: "#DBA33B" }}>{price}</span>}
+          </div>
+        );
+      })}
+    </div>
+  );
+  if (!title) return <div className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-2">{rows}</div>;
+  return (
+    <div className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-2">
+      <button onClick={() => setOpen(o => !o)} className="w-full flex justify-between items-center gap-3 py-2">
+        <span className="text-left" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 18, color: "#54432B" }}>{title}</span>
+        <span className="flex items-center gap-2 shrink-0">
+          <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 13, color: "#9B9280" }}>{lines.length} productos</span>
+          <i className={`${open ? "fi-rs-angle-up" : "fi-rs-angle-down"}`} style={{ fontSize: 13, color: "#B9AE9C" }} />
+        </span>
+      </button>
+      {open && rows}
     </div>
   );
 }

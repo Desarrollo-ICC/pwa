@@ -129,7 +129,6 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
   const [weather, setWeather] = useState<{ temp: number; feels: number; humidity: number; wind: number; code: number } | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   // Tablas editables desde el admin (Páginas de Información → ui-centro-ski, filas "a | b | c | d")
-  const [tables, setTables] = useState<{ andariveles: string[][]; pistas: string[][] }>({ andariveles: ANDARIVELES, pistas: PISTAS });
   const [csUi, setCsUi] = useState<Record<string, string>>({});
   const csText = (k: string, fb: string) => (csUi[k] !== undefined && csUi[k] !== "" ? csUi[k] : fb);
 
@@ -141,14 +140,6 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
         const m: Record<string, string> = {};
         for (const b of blocks) if (b.title && b.block === "text") m[b.title] = b.content ?? "";
         setCsUi(m);
-        const parse = (title: string) => {
-          const b = blocks.find(x => x.title === title);
-          if (!b?.content) return null;
-          return b.content.split("\n").filter(l => l.trim()).map(l => l.split("|").map(c => c.trim()));
-        };
-        const a = parse("Reporte Andariveles");
-        const pi = parse("Pistas");
-        if (a || pi) setTables(t => ({ andariveles: a ?? t.andariveles, pistas: pi ?? t.pistas }));
       })
       .catch(() => {});
   }, []);
@@ -247,102 +238,27 @@ function CentroDeSkiView({ onBack, skiActivities }: { onBack: () => void; skiAct
 
         <div className="my-6" style={{ borderTop: "2px solid #D7D2CB" }} />
 
-        {/* Reporte Andariveles (Figma: tabla con scroll horizontal) */}
-        <h3 className="font-playfair font-bold text-center" style={{ fontSize: 32, lineHeight: 1.1, color: "#54432B" }}>{csText("Título andariveles", "Reporte Andariveles")}</h3>
-        <SkiTable
-          headers={["Nombre", "Tipo", "Horario", "Estado"]}
-          rows={tables.andariveles}
-          statusCol={3}
-        />
-
-        <div className="my-6" style={{ borderTop: "2px solid #D7D2CB" }} />
-
-        {/* Pistas (Figma) */}
-        <h3 className="font-playfair font-bold text-center" style={{ fontSize: 32, lineHeight: 1.1, color: "#54432B" }}>{csText("Título pistas", "Pistas")}</h3>
-        <SkiTable
-          headers={["Nombre", "Estado", "Dificultad", "Condición"]}
-          rows={tables.pistas}
-          statusCol={1}
-        />
+        {/* Reporte de andariveles y pistas → redirección a Nevados de Chillán (Ajustes 11.08) */}
+        <a
+          href={csText("Reporte URL", "https://www.nevadosdechillan.com/reporte-montana")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center w-full text-center active:opacity-80"
+          style={{
+            minHeight: 32,
+            borderRadius: 25,
+            padding: "3px 16px",
+            background: "linear-gradient(90deg, #215732 0%, #47835A 50%, #215732 100%)",
+            color: "#FFFBF3",
+            fontFamily: "'Cooper Hewitt', sans-serif",
+            fontWeight: 500,
+            fontSize: 20,
+            lineHeight: 1.2,
+          }}
+        >
+          {csText("Reporte texto", "Reporte de Andariveles y Pistas")}
+        </a>
       </div>
-    </div>
-  );
-}
-
-// Datos del reporte (Figma "PWA- Centro de Ski"; se actualizan a mano por ahora)
-const ANDARIVELES: string[][] = [
-  ["Tata", "Silla Cuádruple", "Zona Baja", "Cerrado"],
-  ["Refugio", "Silla Triple", "Zona Baja", "Abierto"],
-];
-
-const PISTAS: string[][] = [
-  ["Cóndor", "Cerrado", "Experto", "Ninguna"],
-  ["Cóndor II", "Abierto", "Experto", "Ninguna"],
-  ["Moto-X", "Cerrado", "Intermedio", "Ninguna"],
-  ["Curvitas", "Abierto", "Intermedio", "Ninguna"],
-  ["Novicios", "Cerrado", "Principiante", "Ninguna"],
-  ["Súper-X", "Abierto", "Avanzado", "Ninguna"],
-  ["Nacional", "Cerrado", "Avanzado", "Ninguna"],
-  ["Bosque Zion", "Abierto", "Intermedio", "Ninguna"],
-  ["Renegado", "Cerrado", "Avanzado", "Ninguna"],
-  ["Águila", "Abierto", "Experto", "Ninguna"],
-  ["Fumarolas – Sendero Enduro", "Cerrado", "Intermedio", "Ninguna"],
-  ["Candado – Sendero Enduro", "Abierto", "Experto", "Ninguna"],
-  ["Garganta – Sendero Enduro", "Cerrado", "Experto", "Ninguna"],
-  ["Sendero E-Bike", "Abierto", "Principiante", "Ninguna"],
-  ["Sendero Familiar", "Cerrado", "Principiante", "Ninguna"],
-];
-
-// Tabla con scroll horizontal (Figma: headers Poltawski Bold 24 #3F2012, filas 16,
-// Estado en verde #47835A / teja #DB7C59)
-// Íconos de dificultad (Figma: Experto ◆◆ negro, Avanzado ◆ negro,
-// Intermedio cuadrado azul #457DAF, Principiante círculo verde #47835A)
-function DifficultyIcon({ label }: { label: string }) {
-  const diamond = <span className="inline-block" style={{ width: 10, height: 10, backgroundColor: "#000", transform: "rotate(45deg)" }} />;
-  switch (label.trim()) {
-    case "Experto":
-      return <span className="inline-flex items-center gap-1">{diamond}{diamond}</span>;
-    case "Avanzado":
-      return diamond;
-    case "Intermedio":
-      return <span className="inline-block" style={{ width: 13, height: 13, backgroundColor: "#457DAF" }} />;
-    case "Principiante":
-      return <span className="inline-block rounded-full" style={{ width: 13, height: 13, backgroundColor: "#47835A" }} />;
-    default:
-      return null;
-  }
-}
-
-function SkiTable({ headers, rows, statusCol }: { headers: string[]; rows: string[][]; statusCol: number }) {
-  return (
-    <div className="overflow-x-auto no-scrollbar -mx-5 px-5 mt-4">
-      <table style={{ minWidth: 560, width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            {headers.map(h => (
-              <th key={h} className="text-left pb-2 pr-4" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 24, color: "#3F2012", borderBottom: "1px solid #D7D2CB" }}>{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i}>
-              {r.map((c, j) => (
-                <td key={j} className="py-2.5 pr-4" style={{
-                  fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 16,
-                  color: j === statusCol ? (c === "Abierto" ? "#47835A" : "#DB7C59") : "#3F2012",
-                  borderBottom: i < rows.length - 1 ? "1px solid #D7D2CB" : "none",
-                }}>
-                  <span className="inline-flex items-center gap-2">
-                    <DifficultyIcon label={c} />
-                    {c}
-                  </span>
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }

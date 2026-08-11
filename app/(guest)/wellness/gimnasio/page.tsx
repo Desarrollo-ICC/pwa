@@ -61,7 +61,7 @@ export default function GimnasioPage() {
 // Card de clase (Figma: instancia "Precio 2 Líneas" 382×137 — igual a tratamientos:
 // título Poltawski Bold 20, desc 16, filete, $ dorado + precio café | reloj dorado + horario café; desplegable)
 function GymCard({ c }: { c: GymClass }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   return (
     <div className="shadow-sm" style={{ backgroundColor: "#F3ECE4", borderRadius: 12, padding: "10px 16px 12px" }}>
       <button onClick={() => setOpen(o => !o)} className="w-full flex justify-between items-center gap-3">

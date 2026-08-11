@@ -41,7 +41,7 @@ export default function RestaurantCategoryPage({ params }: { params: Promise<{ r
       {/* Barra Superior de subcategorías — bajo el header, sobre el hero.
           Figma: solo en cartas tipo card (Coctelería, Comida); Vinos/Destilados/Otras Bebidas no la llevan. */}
       {Object.keys(bySub).length > 1 && catItems.some(i => i.description) && (
-        <div className="bg-[#215732] sticky top-[85px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+        <div className="bg-[#215732] sticky top-[85px] md:top-[68px] z-40" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
           <div className="flex gap-2 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
             {Object.keys(bySub).map(sub => (
               <button
@@ -75,12 +75,14 @@ export default function RestaurantCategoryPage({ params }: { params: Promise<{ r
         {!loading && catItems.length === 0 && (
           <p className="text-[#9B9280] text-center py-8 text-[14px]">Sin ítems en esta carta.</p>
         )}
-        {Object.entries(bySub).map(([sub, subItems]) => {
+        {Object.entries(bySub).map(([sub, subItems], subIdx) => {
           // Figma: ítems con descripción (coctelería, licores, comida) → cards desplegables;
           // listas simples (vinos, destilados) → filas nombre/precio dorado
           const cardStyle = subItems.some(i => i.description);
           return (
             <div key={sub} id={`sub-${slugifyCat(sub)}`} style={{ scrollMarginTop: 150 }}>
+              {/* Filete entre subcategorías (Ajustes 11.08) */}
+              {subIdx > 0 && cardStyle && <div className="mx-4 mb-5" style={{ borderTop: "2px solid #D7D2CB" }} />}
               {cardStyle ? (
                 <>
                   <h3 className="font-playfair font-bold text-[#54432B] text-[26px] leading-none text-center mb-3">{sub}</h3>
@@ -118,7 +120,7 @@ export default function RestaurantCategoryPage({ params }: { params: Promise<{ r
 // título Poltawski Bold 20, descripción Cooper Hewitt 16, filete #D7D2CB,
 // precio 15 con ícono usd-circle dorado, chevron desplegable)
 function DrinkCard({ item }: { item: Item }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   return (
     <div className="shadow-sm" style={{ backgroundColor: "#F3ECE4", borderRadius: 12, padding: "10px 16px 12px" }}>
       <button onClick={() => setOpen(o => !o)} className="w-full flex justify-between items-center gap-3">

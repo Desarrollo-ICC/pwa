@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, use } from "react";
+import { useEffect, useRef, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
@@ -19,6 +19,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
   const [items, setItems] = useState<Item[]>([]);
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const uiText = useUiTexts("ui-restaurantes");
+  const dailyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!cfg) return;
@@ -72,7 +73,22 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
             <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 32, color: "#54432B", textAlign: "center" }} className="mb-3">
               {uiText("Título menú del día", "Menú del día")}
             </h2>
-            <div className="flex overflow-x-auto no-scrollbar gap-4 pb-2" style={{ scrollSnapType: "x mandatory" }}>
+            <div className="relative">
+              <button
+                onClick={() => dailyRef.current?.scrollBy({ left: -352, behavior: "smooth" })}
+                className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 items-center justify-center text-[#54432B] hover:bg-[#F3ECE4] transition-colors"
+                aria-label="Anterior"
+              >
+                <i className="fi-ts-angle-left" style={{ fontSize: 16 }} />
+              </button>
+              <button
+                onClick={() => dailyRef.current?.scrollBy({ left: 352, behavior: "smooth" })}
+                className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 items-center justify-center text-[#54432B] hover:bg-[#F3ECE4] transition-colors"
+                aria-label="Siguiente"
+              >
+                <i className="fi-ts-angle-right" style={{ fontSize: 16 }} />
+              </button>
+            <div ref={dailyRef} className="flex overflow-x-auto no-scrollbar gap-4 pb-2" style={{ scrollSnapType: "x mandatory" }}>
               {daily.map(d => (
                 <div key={d.id} className="shrink-0 w-[82vw] max-w-[320px] bg-[#F3ECE4] rounded-2xl overflow-hidden border border-[#EDE6D8] shadow-sm snap-center">
                   <img src={cfg.image} alt={d.name} className="w-full h-[170px] object-cover" />
@@ -83,6 +99,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
                   </div>
                 </div>
               ))}
+            </div>
             </div>
           </div>
         )}
@@ -101,21 +118,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
                   return acc;
                 }, {})
               ).map(([sub, subItems]) => (
-                /* Figma (Muffin Café): el título de la subcategoría va DENTRO de la card, a la izquierda */
-                <div key={sub} className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 pt-3.5 pb-2 flex flex-col">
-                  <h3 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-1">{sub}</h3>
-                  <div className="flex flex-col divide-y divide-[#E8DDD0]">
-                    {subItems.map(item => (
-                      <div key={item.id} className="flex justify-between items-start gap-3 py-2.5">
-                        <div className="flex-1">
-                          <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#54432B" }}>{item.name}</p>
-                          {item.description && <p className="text-[#9B9280] text-[12px] mt-0.5">{item.description}</p>}
-                        </div>
-                        {item.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 15, lineHeight: 1.5, color: "#DBA33B" }}>{item.price}</span>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <MenuGroupCard key={sub} title={sub} items={subItems} />
               ))}
             </div>
           </>
@@ -147,6 +150,35 @@ export default function RestaurantPage({ params }: { params: Promise<{ restauran
       </div>
 
       <BottomNav />
+    </div>
+  );
+}
+
+// Grupo de carta desplegable (Ajustes 11.08: comienza cerrado, muestra N productos)
+function MenuGroupCard({ title, items }: { title: string; items: Item[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-2 flex flex-col">
+      <button onClick={() => setOpen(o => !o)} className="w-full flex justify-between items-center gap-3 py-2">
+        <span className="text-left" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }}>{title}</span>
+        <span className="flex items-center gap-2 shrink-0">
+          <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 13, color: "#9B9280" }}>{items.length} productos</span>
+          <i className={`${open ? "fi-rs-angle-up" : "fi-rs-angle-down"}`} style={{ fontSize: 13, color: "#B9AE9C" }} />
+        </span>
+      </button>
+      {open && (
+        <div className="flex flex-col divide-y divide-[#E8DDD0]">
+          {items.map(item => (
+            <div key={item.id} className="flex justify-between items-start gap-3 py-2.5">
+              <div className="flex-1">
+                <p style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#54432B" }}>{item.name}</p>
+                {item.description && <p className="text-[#9B9280] text-[12px] mt-0.5">{item.description}</p>}
+              </div>
+              {item.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontWeight: 400, fontSize: 15, lineHeight: 1.5, color: "#DBA33B" }}>{item.price}</span>}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

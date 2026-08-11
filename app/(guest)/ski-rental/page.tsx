@@ -65,26 +65,37 @@ export default function SkiRentalPage() {
         {GROUPS.map(g => {
           const rows = items.filter(i => i.category === g.cat);
           if (!rows.length) return null;
-          return (
-            /* Figma: el título va DENTRO de la card, precios dorados */
-            <div key={g.cat} className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 pt-3.5 pb-2 flex flex-col">
-              <h2 style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }} className="mb-1">
-                {uiText(`Título — ${g.cat}`, g.title)}
-              </h2>
-              <div className="flex flex-col divide-y divide-[#E8DDD0]">
-                {rows.map(r => (
-                  <div key={r.id} className="flex justify-between items-center gap-3 py-2.5">
-                    <span style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#54432B" }}>{r.name}</span>
-                    {r.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#DBA33B" }}>{r.price}</span>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
+          return <RentalGroupCard key={g.cat} title={uiText(`Título — ${g.cat}`, g.title)} rows={rows} />;
         })}
       </div>
 
       <BottomNav />
+    </div>
+  );
+}
+
+// Grupo de precios desplegable (Ajustes 11.08: comienza cerrado)
+function RentalGroupCard({ title, rows }: { title: string; rows: Activity[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-[#F3ECE4] rounded-2xl border border-[#EDE6D8] shadow-sm px-4 py-2 flex flex-col">
+      <button onClick={() => setOpen(o => !o)} className="w-full flex justify-between items-center gap-3 py-2">
+        <span className="text-left" style={{ fontFamily: "'Poltawski Nowy', Georgia, serif", fontWeight: 700, fontSize: 20, color: "#54432B" }}>{title}</span>
+        <span className="flex items-center gap-2 shrink-0">
+          <span style={{ fontFamily: "'Cooper Hewitt', sans-serif", fontSize: 13, color: "#9B9280" }}>{rows.length} artículos</span>
+          <i className={`${open ? "fi-rs-angle-up" : "fi-rs-angle-down"}`} style={{ fontSize: 13, color: "#B9AE9C" }} />
+        </span>
+      </button>
+      {open && (
+        <div className="flex flex-col divide-y divide-[#E8DDD0]">
+          {rows.map(r => (
+            <div key={r.id} className="flex justify-between items-center gap-3 py-2.5">
+              <span style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#54432B" }}>{r.name}</span>
+              {r.price && <span className="shrink-0" style={{ fontFamily: "Cooper Hewitt, sans-serif", fontSize: 15, color: "#DBA33B" }}>{r.price}</span>}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

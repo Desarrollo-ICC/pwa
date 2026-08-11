@@ -41,7 +41,7 @@ export default function HabitacionPage() {
   const uiText = useUiTexts("ui-habitacion");
   const [heroImg, setHeroImg] = useState<string | null>(habCache ? (habCache.find(i => i.section === "hero_image")?.content ?? "/images/habitacion.jpg") : null);
   const [active, setActive] = useState("lavanderia");
-  const [openLav, setOpenLav] = useState<string | null>("Lavandería - Hombre");
+  const [openLav, setOpenLav] = useState<string | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function HabitacionPage() {
     <div className="min-h-svh bg-[#FFFBF3]">
 
       {/* Nav bar — below header, above hero (Figma: Barra Superior Habitación) */}
-      <div className="bg-[#215732] sticky top-[85px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+      <div className="bg-[#215732] sticky top-[85px] md:top-[68px] z-40" style={{ minHeight: 56, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex gap-1 overflow-x-auto no-scrollbar px-3 py-3 md:justify-center">
           {visible.map(t => (
             <button

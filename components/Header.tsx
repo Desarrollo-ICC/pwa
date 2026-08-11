@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { href: "/wellness",                  labelKey: "nav.wellness",   iconClass: "fi-ts-hot-tub" },
   { href: "/actividades",               labelKey: "nav.activities", iconClass: "fi-ts-mountain" },
   { href: "/info/ski",                  labelKey: "nav.ski",        iconClass: "fi-ts-skiing" },
-  { href: "/info/informacion-general",  labelKey: "nav.info",       iconClass: "fi-rs-info" },
+  { href: "/info/informacion-general",  labelKey: "nav.info",       iconClass: "fi-ts-information" },
   { href: "/info/emergencias",          labelKey: "nav.emergency",  iconClass: "fi-ts-phone-call" },
 ];
 
